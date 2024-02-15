@@ -5,10 +5,10 @@ import { useSDK } from '@metamask/sdk-react';
 
 // components
 import MetaMaskModal from '../modals/metamask-modal';
-import ConnectWalletButton from '../buttons/connectWalletButton';
+import ConnectWalletButton from '../buttons/connect-wallet-button';
 
 // custonm hooks
-import { useClickOutside } from './../../hooks';
+import { useClickOutside } from '../../hooks';
 
 // img
 import logo from './../../assets/images/logo_white.png';
@@ -35,28 +35,6 @@ export default () => {
       console.error(`failed to connect...`, err);
     }
   };
-
-  // const addToken = async () => {
-  //   const tokenData = {
-  //     address: '0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC', //0xe6D01D086a844a61641C75f1BCA572e7aa70e154 MOR
-  //     symbol: 'STORJ',
-  //     decimals: 8,
-  //   };
-
-  //   try {
-  //     const result = await provider?.request({
-  //       method: 'wallet_watchAsset',
-  //       params: {
-  //         type: 'ERC20',
-  //         options: { ...tokenData },
-  //       },
-  //     });
-
-  //     // console.log(account)
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   const onConnectClicked = async () => {
     if (connected) {

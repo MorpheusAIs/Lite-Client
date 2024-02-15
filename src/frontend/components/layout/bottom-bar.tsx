@@ -1,7 +1,6 @@
 // libs
-import React, { useState, useContext, useEffect } from 'react';
-import { SwitchTransition, CSSTransition } from 'react-transition-group';
-import Styled, { ThemeContext } from 'styled-components';
+import React from 'react';
+import Styled from 'styled-components';
 import MainNavigation from './navigation';
 
 export default () => {
