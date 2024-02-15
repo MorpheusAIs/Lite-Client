@@ -6,16 +6,14 @@ import { HashRouter } from 'react-router-dom';
 
 // custom components
 import { QrCodeModal } from './components/modals/qr-code-modal';
-import AppInit from './components/layout/appInit';
+import AppInit from './components/layout/app-init';
 import Main from './components/layout/main';
-import ChooseDirectoryModalComponent from './components/modals/chooseDirectoryModal';
 
 // helpers
 import { updateQrCode } from './helpers';
-import { IpcChannel } from './../events';
 
 // theme
-import ThemeProvider from './theme/themeProvider';
+import ThemeProvider from './theme/theme-provider';
 import GlobalStyle from './theme/index';
 import './index.css';
 

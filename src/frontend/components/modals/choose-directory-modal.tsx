@@ -4,7 +4,7 @@ import Styled from 'styled-components';
 
 // custom
 import BackDropComponent from './backdrop';
-import RoundButton from '../buttons/roundButton';
+import RoundButton from '../buttons/round-button';
 
 export interface Props {
   onClick: () => void;

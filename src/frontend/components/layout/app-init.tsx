@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Styled, { useTheme } from 'styled-components';
 import { InfinitySpin } from 'react-loader-spinner';
-import { OllamaChannel } from './../../../events';
+import { OllamaChannel } from '../../../events';
 
 const AppInit = () => {
   const [currentStatus, setCurrentStatus] = useState('');

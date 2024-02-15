@@ -3,7 +3,7 @@ import React from 'react';
 import Styled from 'styled-components';
 
 // components
-import MainNavigationButton from '../buttons/navigationButton';
+import MainNavigationButton from '../buttons/navigation-button';
 
 // images
 import ChatImg from './../../assets/images/chat.svg';

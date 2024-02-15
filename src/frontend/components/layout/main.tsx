@@ -3,8 +3,8 @@ import React from 'react';
 import Styled from 'styled-components';
 
 // layout components
-import TopBar from './topBar';
-import BottomBar from './bottomBar';
+import TopBar from './top-bar';
+import BottomBar from './bottom-bar';
 
 // router
 import { MainRouter } from '../../router';
