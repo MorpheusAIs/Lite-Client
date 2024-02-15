@@ -16,6 +16,7 @@ import { updateQrCode } from './helpers';
 import ThemeProvider from './theme/theme-provider';
 import GlobalStyle from './theme/index';
 import './index.css';
+import { AIMessagesProvider } from './contexts';
 
 // root
 const rootElement = document.querySelector('#root') as Element;
@@ -90,65 +91,67 @@ const AppRoot = () => {
   return (
     <React.StrictMode>
       <ThemeProvider>
-        <MetaMaskProvider
-          debug={false}
-          sdkOptions={{
-            logging: {
-              developerMode: false,
-            },
-            communicationServerUrl: 'https://metamask-sdk-socket.metafi.codefi.network/',
-            checkInstallationImmediately: false,
-            i18nOptions: {
-              enabled: true,
-            },
-            dappMetadata: {
-              name: 'MorpheusAI SubMod',
-              url: window.location.host,
-            },
-            modals: {
-              install: ({ link }) => {
-                let modalContainer: HTMLElement;
-
-                return {
-                  mount: () => {
-                    if (modalContainer) return;
-
-                    modalContainer = document.createElement('div');
-
-                    modalContainer.id = 'meta-mask-modal-container';
-
-                    document.body.appendChild(modalContainer);
-
-                    ReactDOM.render(
-                      <QrCodeModal
-                        onClose={() => {
-                          ReactDOM.unmountComponentAtNode(modalContainer);
-                          modalContainer.remove();
-                        }}
-                      />,
-                      modalContainer,
-                    );
-
-                    setTimeout(() => {
-                      updateQrCode(link);
-                    }, 100);
-                  },
-                  unmount: () => {
-                    if (modalContainer) {
-                      ReactDOM.unmountComponentAtNode(modalContainer);
-
-                      modalContainer.remove();
-                    }
-                  },
-                };
+        <AIMessagesProvider>
+          <MetaMaskProvider
+            debug={false}
+            sdkOptions={{
+              logging: {
+                developerMode: false,
               },
-            },
-          }}
-        >
-          {!isInitialized && <AppInit />}
-          {isInitialized && <Main />}
-          {/* {modelsPathFetched && !isModelsPathSet && <ChooseDirectoryModalComponent onClick={async () => await handleSelectFolderClicked()} />} */}
-        </MetaMaskProvider>
+              communicationServerUrl: 'https://metamask-sdk-socket.metafi.codefi.network/',
+              checkInstallationImmediately: false,
+              i18nOptions: {
+                enabled: true,
+              },
+              dappMetadata: {
+                name: 'MorpheusAI SubMod',
+                url: window.location.host,
+              },
+              modals: {
+                install: ({ link }) => {
+                  let modalContainer: HTMLElement;
+
+                  return {
+                    mount: () => {
+                      if (modalContainer) return;
+
+                      modalContainer = document.createElement('div');
+
+                      modalContainer.id = 'meta-mask-modal-container';
+
+                      document.body.appendChild(modalContainer);
+
+                      ReactDOM.render(
+                        <QrCodeModal
+                          onClose={() => {
+                            ReactDOM.unmountComponentAtNode(modalContainer);
+                            modalContainer.remove();
+                          }}
+                        />,
+                        modalContainer,
+                      );
+
+                      setTimeout(() => {
+                        updateQrCode(link);
+                      }, 100);
+                    },
+                    unmount: () => {
+                      if (modalContainer) {
+                        ReactDOM.unmountComponentAtNode(modalContainer);
+
+                        modalContainer.remove();
+                      }
+                    },
+                  };
+                },
+              },
+            }}
+          >
+            {!isInitialized && <AppInit />}
+            {isInitialized && <Main />}
+            {/* {modelsPathFetched && !isModelsPathSet && <ChooseDirectoryModalComponent onClick={async () => await handleSelectFolderClicked()} />} */}
+          </MetaMaskProvider>
+        </AIMessagesProvider>
       </ThemeProvider>
     </React.StrictMode>
   );
