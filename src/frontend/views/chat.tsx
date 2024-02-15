@@ -1,18 +1,19 @@
+// libs
 import React, { FormEvent, useEffect, useState } from 'react';
-import { OllamaChannel } from './../../events';
 import Styled from 'styled-components';
+import { ThreeDots } from 'react-loader-spinner';
 
-export interface DialogueEntry {
-  question: string;
-  answer?: string;
-  answered: boolean;
-}
+// types and helpers
+import { AIMessage } from '../types';
+import { OllamaChannel } from './../../events';
+import { useAIMessagesContext } from '../contexts';
 
 const ChatView = (): JSX.Element => {
   const [selectedModel, setSelectedModel] = useState('mistral');
-  const [dialogueEntries, setDialogueEntries] = useState<Array<DialogueEntry>>([]);
+  const [dialogueEntries, setDialogueEntries] = useAIMessagesContext();
   const [inputValue, setInputValue] = useState('');
-  const [currentQuestion, setCurrentQuestion] = useState<DialogueEntry>();
+  const [currentQuestion, setCurrentQuestion] = useState<AIMessage>();
+  const [isOllamaBeingPolled, setIsOllamaBeingPolled] = useState(false);
 
   useEffect(() => {
     window.backendBridge.ollama.onAnswer((response) => {
@@ -30,6 +31,10 @@ const ChatView = (): JSX.Element => {
   });
 
   const handleQuestionAsked = async (question: string) => {
+    if (isOllamaBeingPolled) {
+      return;
+    }
+
     const dialogueEntry = {
       question: question,
       answered: false,
@@ -37,6 +42,8 @@ const ChatView = (): JSX.Element => {
 
     setCurrentQuestion(dialogueEntry);
     setInputValue('');
+
+    setIsOllamaBeingPolled(true);
 
     const response = await window.backendBridge.ollama.question({
       model: selectedModel,
@@ -50,6 +57,8 @@ const ChatView = (): JSX.Element => {
         { question: question, answer: response.message.content, answered: true },
       ]);
     }
+
+    setIsOllamaBeingPolled(false);
   };
 
   const handleQuestionChange = (e: FormEvent<HTMLInputElement>) => {
@@ -70,12 +79,20 @@ const ChatView = (): JSX.Element => {
             </Chat.QuestionWrapper>
           );
         })}
-        {currentQuestion && <Chat.Question>{`> ${currentQuestion.question}`}</Chat.Question>}
+        {currentQuestion && (
+          <Chat.QuestionWrapper>
+            <Chat.Question>{`> ${currentQuestion.question}`}</Chat.Question>
+            <Chat.Answer>
+              <Chat.PollingIndicator width="30" height="20" />
+            </Chat.Answer>
+          </Chat.QuestionWrapper>
+        )}
       </Chat.Main>
       <Chat.Bottom>
         <Chat.InputWrapper>
           <Chat.Arrow>&gt;</Chat.Arrow>
           <Chat.Input
+            disabled={isOllamaBeingPolled}
             value={inputValue}
             onChange={handleQuestionChange}
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -84,7 +101,7 @@ const ChatView = (): JSX.Element => {
               }
             }}
           />
-          <Chat.SubmitButton onClick={() => handleQuestionAsked(inputValue)} />
+          <Chat.SubmitButton disabled={isOllamaBeingPolled} onClick={() => handleQuestionAsked(inputValue)} />
         </Chat.InputWrapper>
       </Chat.Bottom>
       {/* <div onClick={() => handleQuestionAsked('How much is 5 times 5?')}>Ask Olama</div>
@@ -132,6 +149,9 @@ const Chat = {
     font-size: ${(props) => props.theme.fonts.size.small};
     margin-left: 20px;
   `,
+  PollingIndicator: Styled(ThreeDots)`
+    display: flex;
+  `,
   Bottom: Styled.div`
     display: flex;
     width: 100%;
@@ -166,7 +186,7 @@ const Chat = {
     position: absolute;
     left: 10px;
   `,
-  SubmitButton: Styled.div`
+  SubmitButton: Styled.button`
     display: flex;
     width: 30px;
     height: 30px;
@@ -175,6 +195,7 @@ const Chat = {
     position: absolute;
     right: 5px;
     cursor: pointer;
+    border: none;
 
     &:hover {
       background: ${(props) => props.theme.colors.emerald};
