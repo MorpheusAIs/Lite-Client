@@ -21,10 +21,17 @@ const config: ForgeConfig = {
     icon: 'src/frontend/assets/images/circle-mor-logo.ico',
     osxSign: {
       identity: process.env.APPLE_DEVELOPER_ID,
-      hardenedRuntime: true,
-      entitlements: 'entitlements.plist',
-      'entitlements-inherit': 'entitlements.plist',
+      optionsForFile: () => {
+        return {
+          entitlements: './entitlements.plist'
+        }
+      },
     },
+    ...((process.env.APPLE_ID && process.env.APPLE_ID_PASSWORD && process.env.APPLE_TEAM_ID) && { osxNotarize: {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_ID_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID,
+    }})
   },
   hooks: {
     postPackage: async (_, { platform, outputPaths }) => {
@@ -35,7 +42,7 @@ const config: ForgeConfig = {
             ? 'ollama.exe'
             : 'ollama-linux';
 
-      const outputResourceFolder = `${outputPaths[0]}${platform === 'darwin' ? '/mor-submod.app/Contents' : ''}/resources/executables/`;
+      const outputResourceFolder = `${outputPaths[0]}${platform === 'darwin' ? '/morpheus.app/Contents' : ''}/resources/executables/`;
 
       fs.readdir(outputResourceFolder, (err, files) => {
         if (err) {
@@ -81,7 +88,6 @@ const config: ForgeConfig = {
           path: '/path/to/file',
         },
       ],
-//      identity: process.env.APPLE_DEVELOPER_ID,
     }),
   ],
   plugins: [
