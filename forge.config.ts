@@ -6,6 +6,7 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { MakerDMG } from '@electron-forge/maker-dmg';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
+import { PublisherGithub } from '@electron-forge/publisher-github';
 import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
@@ -21,10 +22,17 @@ const config: ForgeConfig = {
     icon: 'src/frontend/assets/images/circle-mor-logo.ico',
     osxSign: {
       identity: process.env.APPLE_DEVELOPER_ID,
-      hardenedRuntime: true,
-      entitlements: 'entitlements.plist',
-      'entitlements-inherit': 'entitlements.plist',
+      optionsForFile: () => {
+        return {
+          entitlements: './entitlements.plist'
+        }
+      },
     },
+    ...((process.env.APPLE_ID && process.env.APPLE_ID_PASSWORD && process.env.APPLE_TEAM_ID) && { osxNotarize: {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_ID_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID,
+    }})
   },
   hooks: {
     postPackage: async (_, { platform, outputPaths }) => {
@@ -35,7 +43,7 @@ const config: ForgeConfig = {
             ? 'ollama.exe'
             : 'ollama-linux';
 
-      const outputResourceFolder = `${outputPaths[0]}${platform === 'darwin' ? '/mor-submod.app/Contents' : ''}/resources/executables/`;
+      const outputResourceFolder = `${outputPaths[0]}${platform === 'darwin' ? '/morpheus.app/Contents' : ''}/resources/executables/`;
 
       fs.readdir(outputResourceFolder, (err, files) => {
         if (err) {
@@ -60,29 +68,16 @@ const config: ForgeConfig = {
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
     new MakerDeb({}),
-    new MakerDMG({
-      name: 'morpheus',
-
-      background: 'src/assets/dmg-background.png',
-      format: 'ULFO',
-      icon: 'src/assets/src/frontend/assets/images/MOR_logo-sq.icnslogo_white.png',
-      overwrite: true,
-      contents: [
-        {
-          x: 410,
-          y: 220,
-          type: 'link',
-          path: '/Applications',
-        },
-        {
-          x: 130,
-          y: 220,
-          type: 'file',
-          path: '/path/to/file',
-        },
-      ],
-//      identity: process.env.APPLE_DEVELOPER_ID,
-    }),
+    new MakerDMG({}),
+  ],
+  publishers: [
+    new PublisherGithub({
+      repository: {
+        owner: 'MorpheusAIs',
+        name: 'Node'
+      },
+      draft: true
+    })
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),

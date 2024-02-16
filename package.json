@@ -9,8 +9,12 @@
     "package": "set DEBUG=electron-packager && electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
+    "publish-github-minor": "yarn version --minor && git push --follow-tags",
+    "publish-github-major": "yarn version --major && git push --follow-tags",
+    "publish-github-patch": "yarn version --patch && git push --follow-tags",
     "lint": "eslint --ext .ts,.tsx .",
-    "pretty": "npx prettier src/**/*.{js,jsx,ts,tsx,json,css} --write"
+    "pretty": "npx prettier --no-error-on-unmatched-pattern src/**/*.{js,jsx,ts,tsx,json,css} --write",
+    "prepare": "husky"
   },
   "prettier": {
     "tabWidth": 2,
@@ -20,13 +24,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "yarn run pretty"
     }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css}": [
-      "prettier --write"
-    ]
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,12 +39,13 @@
   "devDependencies": {
     "@electron-forge/cli": "^7.2.0",
     "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-dmg": "^7.2.0",
     "@electron-forge/maker-rpm": "^7.2.0",
     "@electron-forge/maker-squirrel": "^7.2.0",
     "@electron-forge/maker-zip": "^7.2.0",
-    "@electron-forge/maker-dmg": "^7.2.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "@electron-forge/plugin-webpack": "^7.2.0",
+    "@electron-forge/publisher-github": "^7.2.0",
     "@svgr/webpack": "^8.1.0",
     "@types/ajv": "^1.0.0",
     "@types/qrcode": "^1.5.5",
@@ -80,7 +80,6 @@
     "check-disk-space": "^3.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
-    "native-is-elevated": "^0.7.0",
     "ollama": "^0.4.3",
     "qrcode": "^1.5.3",
     "react-loader-spinner": "^6.1.6",

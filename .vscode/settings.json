@@ -3,11 +3,12 @@
         "asar",
         "codefi",
         "metafi",
+        "notarytool",
         "ollama",
         "qrcode",
         "relocator",
-        "submod",
-        "svgr",
         "Roboto",
+        "submod",
+        "svgr"
     ]
 }

@@ -1,15 +1,10 @@
 import checkDiskSpace from 'check-disk-space';
 import path from 'path';
 import os from 'os';
-import isElevated from 'native-is-elevated';
 import sudo from 'sudo-prompt';
 import { ChildProcess } from 'child_process';
 import { isDev, appPath } from './../index';
 import { logger } from './logger';
-
-export const isElevatedProcess = () => {
-  return isElevated();
-};
 
 export const getDiskSpaceInformation = async (url: string) => {
   return await checkDiskSpace(url);
