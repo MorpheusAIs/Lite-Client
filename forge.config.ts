@@ -20,7 +20,19 @@ const config: ForgeConfig = {
     name: 'morpheus',
     extraResource: ['./src/executables/'],
     icon: 'src/frontend/assets/images/circle-mor-logo.ico',
-    osxSign: {},
+    osxSign: {
+      identity: process.env.APPLE_DEVELOPER_ID,
+      optionsForFile: () => {
+        return {
+          entitlements: './entitlements.plist'
+        }
+      },
+    },
+    ...((process.env.APPLE_ID && process.env.APPLE_ID_PASSWORD && process.env.APPLE_TEAM_ID) && { osxNotarize: {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_ID_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID,
+    }})
   },
   hooks: {
     postPackage: async (_, { platform, outputPaths }) => {
