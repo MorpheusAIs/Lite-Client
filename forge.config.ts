@@ -16,9 +16,15 @@ import { rendererConfig } from './webpack.renderer.config';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    name: 'mor-submod',
+    name: 'morpheus',
     extraResource: ['./src/executables/'],
-    icon: 'logo_white',
+    icon: 'src/frontend/assets/images/circle-mor-logo.ico',
+    osxSign: {
+      identity: process.env.APPLE_DEVELOPER_ID,
+      hardenedRuntime: true,
+      entitlements: 'entitlements.plist',
+      'entitlements-inherit': 'entitlements.plist',
+    },
   },
   hooks: {
     postPackage: async (_, { platform, outputPaths }) => {
