@@ -6,6 +6,7 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { MakerDMG } from '@electron-forge/maker-dmg';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
+import { PublisherGithub } from '@electron-forge/publisher-github';
 import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
@@ -67,28 +68,16 @@ const config: ForgeConfig = {
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
     new MakerDeb({}),
-    new MakerDMG({
-      name: 'morpheus',
-
-      background: 'src/assets/dmg-background.png',
-      format: 'ULFO',
-      icon: 'src/assets/src/frontend/assets/images/MOR_logo-sq.icnslogo_white.png',
-      overwrite: true,
-      contents: [
-        {
-          x: 410,
-          y: 220,
-          type: 'link',
-          path: '/Applications',
-        },
-        {
-          x: 130,
-          y: 220,
-          type: 'file',
-          path: '/path/to/file',
-        },
-      ],
-    }),
+    new MakerDMG({}),
+  ],
+  publishers: [
+    new PublisherGithub({
+      repository: {
+        owner: 'MorpheusAIs',
+        name: 'Node'
+      },
+      draft: true
+    })
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
