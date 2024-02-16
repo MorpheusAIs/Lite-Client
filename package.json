@@ -10,7 +10,8 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "pretty": "npx prettier src/**/*.{js,jsx,ts,tsx,json,css} --write"
+    "pretty": "npx prettier --no-error-on-unmatched-pattern src/**/*.{js,jsx,ts,tsx,json,css} --write",
+    "prepare": "husky"
   },
   "prettier": {
     "tabWidth": 2,
@@ -20,13 +21,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "yarn run pretty"
     }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css}": [
-      "prettier --write"
-    ]
   },
   "eslintConfig": {
     "extends": "react-app"
