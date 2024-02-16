@@ -3,6 +3,7 @@ import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import fs from 'fs';
@@ -16,18 +17,17 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     name: 'mor-submod',
-    extraResource: [
-      './src/executables/'
-    ],
+    extraResource: ['./src/executables/'],
     icon: 'logo_white',
   },
   hooks: {
     postPackage: async (_, { platform, outputPaths }) => {
-      const platformFile = platform === 'darwin'
-        ? 'ollama-darwin'
-        : platform === 'win32'
-          ? 'ollama.exe'
-          : 'ollama-linux';
+      const platformFile =
+        platform === 'darwin'
+          ? 'ollama-darwin'
+          : platform === 'win32'
+            ? 'ollama.exe'
+            : 'ollama-linux';
 
       const outputResourceFolder = `${outputPaths[0]}${platform === 'darwin' ? '/mor-submod.app/Contents' : ''}/resources/executables/`;
 
@@ -42,16 +42,42 @@ const config: ForgeConfig = {
           if (file !== platformFile) {
             fs.unlinkSync(localPath);
           } else {
-            platform !== 'win32'
-              ? exec(`chmod +x ${localPath}`)
-              : fs.chmodSync(localPath, 755);
+            platform !== 'win32' ? exec(`chmod +x ${localPath}`) : fs.chmodSync(localPath, 755);
           }
         });
       });
     },
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({}),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({}),
+    new MakerDeb({}),
+    new MakerDMG({
+      name: 'morpheus',
+
+      background: 'src/assets/dmg-background.png',
+      format: 'ULFO',
+      icon: 'src/assets/src/frontend/assets/images/MOR_logo-sq.icnslogo_white.png',
+      overwrite: true,
+      contents: [
+        {
+          x: 410,
+          y: 220,
+          type: 'link',
+          path: '/Applications',
+        },
+        {
+          x: 130,
+          y: 220,
+          type: 'file',
+          path: '/path/to/file',
+        },
+      ],
+//      identity: process.env.APPLE_DEVELOPER_ID,
+    }),
+  ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({

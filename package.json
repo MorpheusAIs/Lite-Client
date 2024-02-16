@@ -1,8 +1,8 @@
 {
-  "name": "mor-submod",
-  "productName": "mor-submod",
-  "version": "0.0.1-alpha",
-  "description": "MorpheusAI SubMod",
+  "name": "morpheus",
+  "productName": "Morpheus",
+  "version": "0.0.6",
+  "description": "Morpheus is private, sovereign, AI",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development DEBUG=electron-packager electron-forge start",
@@ -33,8 +33,8 @@
   },
   "keywords": [],
   "author": {
-    "name": "ra6e",
-    "email": "novacik.daniel@gmail.com"
+    "name": "Morpheus",
+    "email": "morpheusai@proton.me"
   },
   "license": "MIT",
   "devDependencies": {
@@ -43,6 +43,7 @@
     "@electron-forge/maker-rpm": "^7.2.0",
     "@electron-forge/maker-squirrel": "^7.2.0",
     "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/maker-dmg": "^7.2.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "@electron-forge/plugin-webpack": "^7.2.0",
     "@svgr/webpack": "^8.1.0",
