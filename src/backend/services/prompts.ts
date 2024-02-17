@@ -51,7 +51,7 @@ Response: "{
 }"
 `;
 
-const errorHandling = `If a question is initiating a buy or transfer transaction and the user doesn't specify an amount in ETH. Gently decline to send the transaction
+export const errorHandling = `If a question is initiating a buy or transfer transaction and the user doesn't specify an amount in ETH. Gently decline to send the transaction
 and request the amount to buy or transfer (depending on their transaction type) in ethereum. 
 
 If a question is initiating a sell transaction and the user doesn't specify an amount in tokens. Gently decline to send the transaction

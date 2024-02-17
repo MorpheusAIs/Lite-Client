@@ -1,16 +1,15 @@
 import { app, ipcMain } from 'electron';
-import { Ollama, ProgressResponse } from 'ollama';
+import { Ollama } from 'ollama';
 import { execFile, ChildProcess } from 'child_process';
 import fs from 'fs';
-import { isDev, sendOllamaStatusToRenderer } from '..';
+import { sendOllamaStatusToRenderer } from '..';
 import { MOR_PROMPT } from './prompts';
 
 // events
-import { IpcMainChannel, OllamaChannel } from '../../events';
+import { IpcMainChannel } from '../../events';
 import {
   createDirectoryElevated,
   executeCommandElevated,
-  getDefaultAppDataPathByPlatform,
   getExecutablePathByPlatform,
   killProcess,
   runDelayed,
@@ -22,7 +21,6 @@ import { logger } from './logger';
 
 // constants
 const DEFAULT_OLLAMA_URL = 'http://127.0.0.1:11434/';
-const DEFAULT_OLLAMA_MODEL = 'mistral';
 
 // commands
 export const SERVE_OLLAMA_CMD = 'ollama serve';
@@ -42,7 +40,7 @@ export const loadOllama = async () => {
     });
 
     await sendOllamaStatusToRenderer(
-      `Local instance of ollama is running and connected at ${DEFAULT_OLLAMA_URL}`,
+      `local instance of ollama is running and connected at ${DEFAULT_OLLAMA_URL}`,
     );
 
     return true;
@@ -58,7 +56,7 @@ export const loadOllama = async () => {
     });
 
     await sendOllamaStatusToRenderer(
-      `Local instance of ollama is running and connected at ${DEFAULT_OLLAMA_URL}`,
+      `local instance of ollama is running and connected at ${DEFAULT_OLLAMA_URL}`,
     );
 
     return true;
@@ -73,7 +71,7 @@ export const isOllamaInstanceRunning = async (url?: string): Promise<boolean> =>
   try {
     const usedUrl = url ?? DEFAULT_OLLAMA_URL;
 
-    await sendOllamaStatusToRenderer(`Checking if ollama instance is running at ${usedUrl}`);
+    await sendOllamaStatusToRenderer(`checking if ollama instance is running at ${usedUrl}`);
 
     const ping = await fetch(usedUrl);
 
@@ -84,7 +82,7 @@ export const isOllamaInstanceRunning = async (url?: string): Promise<boolean> =>
 };
 
 export const packedExecutableOllamaSpawn = async (customDataPath?: string) => {
-  await sendOllamaStatusToRenderer(`Trying to spawn locally installed ollama`);
+  await sendOllamaStatusToRenderer(`trying to spawn locally installed ollama`);
 
   try {
     spawnLocalExecutable(customDataPath);
@@ -145,25 +143,19 @@ export const getOllamaExecutableAndAppDataPath = (
 };
 
 export const askOllama = async (model: string, message: string) => {
-  //const engineeredPrompt = `${MOR_PROMPT}\n\nUser: ${message}\n\nResponse:`
   return await ollama.chat({
     model,
     messages: [
-      { 
-        role: 'system', 
-        content: MOR_PROMPT
+      {
+        role: 'system',
+        content: MOR_PROMPT,
       },
-      { 
-        role: 'user', 
-        content: ` Now answer the following question: ${message}. Response:` 
-      }
-    ]
-  
+      {
+        role: 'user',
+        content: ` Now answer the following question: ${message}. Response:`,
+      },
+    ],
   });
-  /*return await ollama.generate({
-    model: model,
-    prompt: engineeredPrompt
-  })*/
 };
 
 export const getOrPullModel = async (model: string) => {
@@ -201,22 +193,6 @@ export const findModel = async (model: string) => {
 
 export const getAllLocalModels = async () => {
   return await ollama.list();
-};
-
-export const consumeStream = async (stream: AsyncGenerator<ProgressResponse, any, unknown>) => {
-  for await (const part of stream) {
-    if (part.digest) {
-      let percent = 0;
-
-      if (part.completed && part.total) {
-        percent = Math.round((part.completed / part.total) * 100);
-
-        return `${part.status} ${percent}%`;
-      }
-    } else {
-      return part.status;
-    }
-  }
 };
 
 export const stopOllama = async () => {

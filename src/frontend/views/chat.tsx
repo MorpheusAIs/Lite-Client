@@ -1,6 +1,7 @@
 // libs
 import React, { FormEvent, useEffect, useState } from 'react';
 import Styled from 'styled-components';
+import { useSDK } from '@metamask/sdk-react';
 import { ThreeDots } from 'react-loader-spinner';
 
 // types and helpers
@@ -8,13 +9,16 @@ import { AIMessage } from '../types';
 import { OllamaChannel } from './../../events';
 import { useAIMessagesContext } from '../contexts';
 
-import { isTransactionIntiated, handleBalanceRequest, handleTransactionRequest } from '../utils/transaction';
-import { useSDK } from '@metamask/sdk-react';
-import {parseResponse} from '../utils/utils'
-import { transactionParams } from '../utils/types';
+import {
+  isTransactionInitiated,
+  handleBalanceRequest,
+  handleTransactionRequest,
+} from '../utils/transaction';
+import { parseResponse } from '../utils/utils';
+import { TransactionParams } from '../utils/types';
 
 const ChatView = (): JSX.Element => {
-  const [selectedModel, setSelectedModel] = useState('mistral');
+  const [selectedModel, setSelectedModel] = useState('orca-mini');
   const [dialogueEntries, setDialogueEntries] = useAIMessagesContext();
   const [inputValue, setInputValue] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState<AIMessage>();
@@ -43,43 +47,48 @@ const ChatView = (): JSX.Element => {
       ...dialogueEntries,
       { question: question, answer: message, answered: true },
     ]);
-  }
+  };
 
-const processResponse = async (question: string, response: string, transaction: transactionParams) => {
-    if (!isTransactionIntiated(transaction)){
+  const processResponse = async (
+    question: string,
+    response: string,
+    transaction: TransactionParams,
+  ) => {
+    if (!isTransactionInitiated(transaction)) {
       updateDialogueEntries(question, response); //no additional logic in this case
+
       return;
     }
 
-    //Sanity Checks:
-    if(!account || !provider){
-      const errorMessage = `Error: Please connect to metamask`
+    // Sanity Checks:
+    if (!account || !provider) {
+      const errorMessage = `Error: Please connect to metamask`;
       updateDialogueEntries(question, errorMessage);
+
       return;
     }
 
-    if (transaction.type.toLowerCase() === "balance") {
+    if (transaction.type.toLowerCase() === 'balance') {
       let message: string;
       try {
         message = await handleBalanceRequest(provider, account, response);
-      } catch (error){
-        message = `Error: Failed to retrieve a valid balance from Metamask, try reconnecting.`
+      } catch (error) {
+        message = `Error: Failed to retrieve a valid balance from Metamask, try reconnecting.`;
       }
       updateDialogueEntries(question, message);
     } else {
       try {
         const builtTx = await handleTransactionRequest(provider, transaction, account);
         updateDialogueEntries(question, response);
-        console.log("from: " + builtTx.params[0].from);
+        console.log('from: ' + builtTx.params[0].from);
         await provider?.request(builtTx);
-      } catch (error){
-        const badTransactionMessage = "Error: There was an error sending your transaction, if the transaction type is balance or transfer please reconnect to metamask"
-        updateDialogueEntries(question, badTransactionMessage);     
+      } catch (error) {
+        const badTransactionMessage =
+          'Error: There was an error sending your transaction, if the transaction type is balance or transfer please reconnect to metamask';
+        updateDialogueEntries(question, badTransactionMessage);
       }
     }
-  
-}
-  
+  };
 
   const handleQuestionAsked = async (question: string) => {
     if (isOllamaBeingPolled) {
@@ -96,14 +105,13 @@ const processResponse = async (question: string, response: string, transaction: 
 
     setIsOllamaBeingPolled(true);
 
-
     const inference = await window.backendBridge.ollama.question({
       model: selectedModel,
       query: question,
     });
 
     if (inference) {
-      const { response, transaction } = parseResponse(inference.message.content)
+      const { response, transaction } = parseResponse(inference.message.content);
       await processResponse(question, response, transaction);
     }
 
@@ -150,7 +158,10 @@ const processResponse = async (question: string, response: string, transaction: 
               }
             }}
           />
-          <Chat.SubmitButton disabled={isOllamaBeingPolled} onClick={() => handleQuestionAsked(inputValue)} />
+          <Chat.SubmitButton
+            disabled={isOllamaBeingPolled}
+            onClick={() => handleQuestionAsked(inputValue)}
+          />
         </Chat.InputWrapper>
       </Chat.Bottom>
       {/* <div onClick={() => handleQuestionAsked('How much is 5 times 5?')}>Ask Olama</div>
