@@ -143,6 +143,7 @@ export const getOllamaExecutableAndAppDataPath = (
 };
 
 export const askOllama = async (model: string, message: string) => {
+  console.log("I AM HERE")
   return await ollama.chat({
     model,
     messages: [
@@ -152,7 +153,7 @@ export const askOllama = async (model: string, message: string) => {
       },
       {
         role: 'user',
-        content: ` Now answer the following question: ${message}. Response:`,
+        content: ` Now answer the following question ${message}. Response:`,
       },
     ],
   });
