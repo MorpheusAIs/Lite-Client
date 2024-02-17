@@ -10,5 +10,8 @@
         "Roboto",
         "submod",
         "svgr"
-    ]
+    ],
+    "[typescript]": {
+        "editor.tabSize": 2
+    }
 }
