@@ -80,6 +80,7 @@
     "check-disk-space": "^3.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
+    "ethers": "^6.11.1",
     "ollama": "^0.4.3",
     "qrcode": "^1.5.3",
     "react-loader-spinner": "^6.1.6",

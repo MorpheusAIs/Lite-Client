@@ -3,6 +3,7 @@ import { Ollama, ProgressResponse } from 'ollama';
 import { execFile, ChildProcess } from 'child_process';
 import fs from 'fs';
 import { isDev, sendOllamaStatusToRenderer } from '..';
+import { MOR_PROMPT } from './prompts';
 
 // events
 import { IpcMainChannel, OllamaChannel } from '../../events';
@@ -144,15 +145,25 @@ export const getOllamaExecutableAndAppDataPath = (
 };
 
 export const askOllama = async (model: string, message: string) => {
+  //const engineeredPrompt = `${MOR_PROMPT}\n\nUser: ${message}\n\nResponse:`
   return await ollama.chat({
     model,
     messages: [
-      {
-        role: 'user',
-        content: `${message}`,
+      { 
+        role: 'system', 
+        content: MOR_PROMPT
       },
-    ],
+      { 
+        role: 'user', 
+        content: ` Now answer the following question: ${message}. Response:` 
+      }
+    ]
+  
   });
+  /*return await ollama.generate({
+    model: model,
+    prompt: engineeredPrompt
+  })*/
 };
 
 export const getOrPullModel = async (model: string) => {
