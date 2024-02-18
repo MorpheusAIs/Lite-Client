@@ -19,20 +19,24 @@ const config: ForgeConfig = {
     asar: true,
     name: 'morpheus',
     extraResource: ['./src/executables/'],
-    icon: 'src/frontend/assets/images/circle-mor-logo.ico',
+    icon: 'src/frontend/assets/images/circle-mor-logo',
     osxSign: {
       identity: process.env.APPLE_DEVELOPER_ID,
       optionsForFile: () => {
         return {
-          entitlements: './entitlements.plist'
-        }
+          entitlements: './entitlements.plist',
+        };
       },
     },
-    ...((process.env.APPLE_ID && process.env.APPLE_ID_PASSWORD && process.env.APPLE_TEAM_ID) && { osxNotarize: {
-      appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_ID_PASSWORD,
-      teamId: process.env.APPLE_TEAM_ID,
-    }})
+    ...(process.env.APPLE_ID &&
+      process.env.APPLE_ID_PASSWORD &&
+      process.env.APPLE_TEAM_ID && {
+        osxNotarize: {
+          appleId: process.env.APPLE_ID,
+          appleIdPassword: process.env.APPLE_ID_PASSWORD,
+          teamId: process.env.APPLE_TEAM_ID,
+        },
+      }),
   },
   hooks: {
     postPackage: async (_, { platform, outputPaths }) => {
@@ -64,20 +68,50 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
+    new MakerSquirrel({
+      iconUrl: 'src/frontend/assets/images/circle-mor-logo.ico',
+    }),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
-    new MakerDeb({}),
-    new MakerDMG({}),
+    new MakerDeb({
+      options: {
+        icon: 'src/frontend/assets/images/MOR_logo_circle.iconset/icon_512x512.png',
+        maintainer: 'Morpheus',
+        homepage: 'https://www.mor.org',
+        categories: ['Utility'],
+      },
+    }),
+    new MakerDMG({
+      icon: 'src/frontend/assets/images/circle-mor-logo.icns',
+      format: 'ULFO',
+      background: 'src/frontend/assets/images/dmgbg.svg',
+      overwrite: true,
+      additionalDMGOptions: {
+        window: {
+          size: {
+            width: 600,
+            height: 600,
+          },
+        },
+      },
+      contents: [
+        {
+          x: 410,
+          y: 220,
+          type: 'link',
+          path: '/Applications',
+        },
+      ],
+    }),
   ],
   publishers: [
     new PublisherGithub({
       repository: {
         owner: 'MorpheusAIs',
-        name: 'Node'
+        name: 'Node',
       },
-      draft: true
-    })
+      draft: true,
+    }),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
