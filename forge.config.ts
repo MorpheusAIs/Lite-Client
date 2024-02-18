@@ -58,7 +58,7 @@ const config: ForgeConfig = {
           const localPath = path.join(outputResourceFolder, file);
 
           if (file !== platformFile) {
-            fs.unlinkSync(localPath);
+            //fs.unlinkSync(localPath);
           } else {
             platform !== 'win32' ? exec(`chmod +x ${localPath}`) : fs.chmodSync(localPath, 755);
           }
@@ -94,14 +94,14 @@ const config: ForgeConfig = {
           },
         },
       },
-      contents: [
-        {
-          x: 410,
-          y: 220,
-          type: 'link',
-          path: '/Applications',
-        },
-      ],
+//     contents: [
+//       {
+//         x: 410,
+//         y: 220,
+//         type: 'link',
+//         path: '/Applications',
+//        },
+//      ],
     }),
   ],
   publishers: [

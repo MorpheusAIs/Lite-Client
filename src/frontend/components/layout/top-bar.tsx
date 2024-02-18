@@ -70,7 +70,7 @@ export default () => {
         </TopBar.Left>
         <TopBar.Middle>
           <TopBar.Logo src={logo} />
-          <TopBar.Header>morpheus ai</TopBar.Header>
+          <TopBar.Header>Morpheus</TopBar.Header>
         </TopBar.Middle>
         <TopBar.Right>
           <ConnectWalletButton
