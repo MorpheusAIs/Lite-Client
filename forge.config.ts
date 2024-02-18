@@ -69,7 +69,7 @@ const config: ForgeConfig = {
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({
-      iconUrl: 'src/frontend/assets/images/circle-mor-logo.ico',
+      setupIcon: 'src/frontend/assets/images/circle-mor-logo.ico',
     }),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
