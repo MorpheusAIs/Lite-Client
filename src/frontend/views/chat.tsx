@@ -18,7 +18,7 @@ import { parseResponse } from '../utils/utils';
 import { TransactionParams } from '../utils/types';
 
 const ChatView = (): JSX.Element => {
-  const [selectedModel, setSelectedModel] = useState('orca-mini');
+  const [selectedModel, setSelectedModel] = useState('llama2');
   const [dialogueEntries, setDialogueEntries] = useAIMessagesContext();
   const [inputValue, setInputValue] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState<AIMessage>();
@@ -52,8 +52,11 @@ const ChatView = (): JSX.Element => {
   const processResponse = async (
     question: string,
     response: string,
-    transaction: TransactionParams,
+    transaction: TransactionParams | undefined,
   ) => {
+    if(transaction == undefined){
+      transaction = {}
+    }
     if (!isTransactionInitiated(transaction)) {
       updateDialogueEntries(question, response); //no additional logic in this case
 
@@ -71,7 +74,7 @@ const ChatView = (): JSX.Element => {
     if (transaction.type.toLowerCase() === 'balance') {
       let message: string;
       try {
-        message = await handleBalanceRequest(provider, account, response);
+        message = await handleBalanceRequest(provider, account);
       } catch (error) {
         message = `Error: Failed to retrieve a valid balance from Metamask, try reconnecting.`;
       }
@@ -110,9 +113,15 @@ const ChatView = (): JSX.Element => {
       query: question,
     });
 
+    console.log(inference)
     if (inference) {
       const { response, transaction } = parseResponse(inference.message.content);
-      await processResponse(question, response, transaction);
+      if(response == "error"){
+        updateDialogueEntries(question,"Sorry, I had a problem with your request.");
+      }
+      else {
+        await processResponse(question, response, transaction);
+      }
     }
 
     setIsOllamaBeingPolled(false);

@@ -66,14 +66,14 @@ const AppRoot = () => {
     const ollamaInit = await window.backendBridge.ollama.init();
 
     if (ollamaInit) {
-      const model = await window.backendBridge.ollama.getModel('orca-mini');
+      const model = await window.backendBridge.ollama.getModel('llama2');
 
       if (model) {
         setIsInitialized(true);
 
         return;
       } else {
-        console.error(`Something went wrong with pulling model ${'orca-mini'}`);
+        console.error(`Something went wrong with pulling model ${'llam2'}`);
       }
     }
 

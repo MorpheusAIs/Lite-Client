@@ -8,4 +8,7 @@ export const models = {
   orcaMini: {
     tags: ['latest', '3b'],
   },
+  nousHermes: {
+    tags: ['latest', '7b'],
+  },
 };

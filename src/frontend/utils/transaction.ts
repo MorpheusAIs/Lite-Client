@@ -55,8 +55,7 @@ const formatWalletBalance = (balanceWeiHex: string) => {
 
 export const handleBalanceRequest = async (
   provider: SDKProvider | undefined,
-  account: string | undefined,
-  response: string,
+  account: string | undefined
 ) => {
   const blockNumber = await provider?.request({
     method: 'eth_blockNumber',
@@ -69,7 +68,7 @@ export const handleBalanceRequest = async (
   });
 
   if (typeof balanceWeiHex === 'string') {
-    return `${response} ${formatWalletBalance(balanceWeiHex)}`;
+    return `${formatWalletBalance(balanceWeiHex)}`;
   } else {
     console.error('Failed to retrieve a valid balance.');
 
