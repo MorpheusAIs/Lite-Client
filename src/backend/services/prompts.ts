@@ -29,7 +29,16 @@ Response: "{
 Example 2:
 Question: "balance?" //User is intiating a balance transaction with their question
 Response: "{
-    "response": ""
+    "response": "",
+    "transaction": { 
+        "type": "Balance"
+    }
+}"
+
+Example 3:
+Question: "Hey Morpheus, whats my balance?" //User is intiating a balance transaction with their question
+Response: "{
+    "response": "",
     "transaction": { 
         "type": "Balance"
     }

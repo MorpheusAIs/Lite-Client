@@ -52,8 +52,11 @@ const ChatView = (): JSX.Element => {
   const processResponse = async (
     question: string,
     response: string,
-    transaction: TransactionParams,
+    transaction: TransactionParams | undefined,
   ) => {
+    if(transaction == undefined){
+      transaction = {}
+    }
     if (!isTransactionInitiated(transaction)) {
       updateDialogueEntries(question, response); //no additional logic in this case
 

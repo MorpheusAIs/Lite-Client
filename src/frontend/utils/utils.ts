@@ -1,3 +1,4 @@
+import { json } from 'react-router-dom';
 import { ModelResponse } from './types';
 
 export const parseResponse = (jsonString: string) => {
@@ -11,9 +12,8 @@ export const parseResponse = (jsonString: string) => {
       jsonString = jsonString + '}' //llama often forgets this
       parsed = JSON.parse(jsonString);
     } catch(error){
-      //new Error("Ollama error")
-      //console.log("RETURN WHOLE STRING")
-      return {response: "error", transaction: {}} //alot of the time the answer is in the jsonString but you got to get it out
+      new Error("Ollama error")
+      return {response: "error", transaction: {}}
     }
   }
 

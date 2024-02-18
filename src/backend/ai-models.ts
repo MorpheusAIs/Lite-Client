@@ -9,6 +9,6 @@ export const models = {
     tags: ['latest', '3b'],
   },
   nousHermes: {
-    tags: ['latest', '7b']
-  }
+    tags: ['latest', '7b'],
+  },
 };

@@ -153,7 +153,7 @@ export const askOllama = async (model: string, message: string) => {
       },
       {
         role: 'user',
-        content: ` Now answer the following question ${message}. Response:`,
+        content: ` Now answer the following question in a formatted JSON with both the response and transaction fields deduced from the users question. Adhere strictly to JSON syntax. Question: ${message}. Response:`,
       },
     ],
   });
