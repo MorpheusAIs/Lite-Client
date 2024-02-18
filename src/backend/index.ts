@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { IpcChannel, IpcMainChannel, OllamaChannel } from '../events';
 import {
@@ -26,6 +26,7 @@ if (require('electron-squirrel-startup')) {
 
 const createWindow = async (): Promise<void> => {
   mainWindow = new BrowserWindow({
+    icon: 'icon.png',
     height: 800,
     width: 1200,
     autoHideMenuBar: true,
