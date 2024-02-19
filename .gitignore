@@ -42,6 +42,9 @@ typings/
 # TypeScript cache
 *.tsbuildinfo
 
+# Typescript declaration files
+*.d.ts
+
 # Optional npm cache directory
 .npm
 
@@ -56,6 +59,7 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
+yarn.lock
 
 # dotenv environment variables file
 .env
@@ -94,3 +98,5 @@ out/
 # Ollama
 blobs/
 manifests/
+
+package-lock.json
