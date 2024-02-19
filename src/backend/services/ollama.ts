@@ -18,6 +18,7 @@ import {
 // storage
 import { getModelPathFromStorage } from '../storage';
 import { logger } from './logger';
+import { Morpheus } from './morpheus';
 
 // constants
 const DEFAULT_OLLAMA_URL = 'http://127.0.0.1:11434/';
@@ -142,8 +143,8 @@ export const getOllamaExecutableAndAppDataPath = (
   };
 };
 
+//instead of using .chat invoke the chain - ensure the chain is already eagerly loaded initalise in preload
 export const askOllama = async (model: string, message: string) => {
-  console.log("I AM HERE")
   return await ollama.chat({
     model,
     messages: [
