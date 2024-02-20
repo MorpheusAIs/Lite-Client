@@ -4,6 +4,9 @@ import { ModelResponse } from './types';
 export const parseResponse = (jsonString: string) => {
   // Assert the type of the parsed object.
   console.log(jsonString)
+  // uses regex to remove comments that llama sometimes includes in the JSON string
+  // ranges from // to the end of the line or the end of the string
+  jsonString = jsonString.replace(/(?<!\\)\/\/.*?(?=\n|$)/gm, ""); 
   let parsed: string
   try {
     parsed = JSON.parse(jsonString);
@@ -13,7 +16,7 @@ export const parseResponse = (jsonString: string) => {
       parsed = JSON.parse(jsonString);
     } catch(error){
       new Error("Ollama error")
-      return {response: "error", transaction: {}}
+      return {response: "error", transaction: {}};
     }
   }
 
