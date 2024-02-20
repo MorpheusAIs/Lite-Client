@@ -97,8 +97,8 @@ export const handleTransactionRequest = async (
 ) => {
 
   const addressInQuestion = extractEthereumAddress(question)
-
-  if(addressInQuestion == transaction.targetAddress){
+  if(addressInQuestion?.toLowerCase() !== transaction.targetAddress.toLowerCase()){
+    console.error(`${addressInQuestion} !== ${transaction.targetAddress} target address did not match address in question`);
     throw new Error('Error, target address did not match address in question');
   }
 
