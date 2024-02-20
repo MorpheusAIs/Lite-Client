@@ -131,8 +131,27 @@ const ChatView = (): JSX.Element => {
     setInputValue(e.currentTarget.value);
   };
 
+  const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedChain = e.target.value;
+    await provider?.request({
+      "method": "wallet_switchEthereumChain",
+      "params": [
+        {
+          "chainId": selectedChain
+        }
+      ]
+    })
+  };
+  
+
   return (
     <Chat.Layout>
+      <Chat.Dropdown onChange={handleNetworkChange}>
+        <option value="0x1">Ethereum</option>
+        <option value="0x5">Goerli</option>
+        <option value="0xa4b1">Arbitrum</option>
+        {/* Add more options as needed */}
+      </Chat.Dropdown>
       <Chat.Main>
         {dialogueEntries.map((entry, index) => {
           return (
@@ -268,6 +287,20 @@ const Chat = {
 
     &:hover {
       background: ${(props) => props.theme.colors.emerald};
+    }
+  `,
+    Dropdown: Styled.select`
+    position: absolute;
+    top: 20px; // Adjust based on your layout
+    left: 10px; // Adjust based on your layout
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f0f0f0;
     }
   `,
 };
