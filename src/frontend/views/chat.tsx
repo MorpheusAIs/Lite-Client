@@ -133,24 +133,39 @@ const ChatView = (): JSX.Element => {
 
   const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedChain = e.target.value;
-    await provider?.request({
-      "method": "wallet_switchEthereumChain",
-      "params": [
-        {
-          "chainId": selectedChain
-        }
-      ]
-    })
+  
+    // Check if the default option is selected
+    if (!selectedChain) {
+      console.log("No network selected.");
+      return; // Early return to avoid further execution
+    }
+  
+    // Sanity Checks:
+    if (!account || !provider) {
+      const errorMessage = `Error: Please connect to MetaMask`;
+      updateDialogueEntries("", errorMessage);
+      return;
+    }
+  
+    try {
+      const response = await provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: selectedChain }],
+      });
+      console.log(response)
+    } catch (error) {
+      console.error("Failed to switch networks:", error);
+    }
   };
   
 
   return (
     <Chat.Layout>
-      <Chat.Dropdown onChange={handleNetworkChange}>
+      <Chat.Dropdown onChange={handleNetworkChange} value="">
+        <option value="">Select a network</option>
         <option value="0x1">Ethereum</option>
         <option value="0x5">Goerli</option>
         <option value="0xa4b1">Arbitrum</option>
-        {/* Add more options as needed */}
       </Chat.Dropdown>
       <Chat.Main>
         {dialogueEntries.map((entry, index) => {
