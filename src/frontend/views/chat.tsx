@@ -24,6 +24,7 @@ const ChatView = (): JSX.Element => {
   const [currentQuestion, setCurrentQuestion] = useState<AIMessage>();
   const [isOllamaBeingPolled, setIsOllamaBeingPolled] = useState(false);
   const { ready, sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
+  const ethInWei = '1000000000000000000'
 
   useEffect(() => {
     window.backendBridge.ollama.onAnswer((response) => {
@@ -84,6 +85,15 @@ const ChatView = (): JSX.Element => {
         const builtTx = await handleTransactionRequest(provider, transaction, account, question);
         updateDialogueEntries(question, response);
         console.log('from: ' + builtTx.params[0].from);
+        //if gas is more than 5% of balance - check with user
+        const balance = await handleBalanceRequest(provider, account)
+        // calculate the max gas cost in Wei (gasPrice * gas)
+        const gasCostInWei = BigInt(builtTx.params[0].gasPrice) * BigInt(builtTx.params[0].gas);
+        // Convert wei to ether
+        const gasCostInEth = gasCostInWei / BigInt(ethInWei);
+        if(parseFloat(balance)*0.05 > gasCostInEth){
+          updateDialogueEntries(question, `Important: The gas cost is expensive relative to your balance please proceed with caution\n\n${response}`);
+        } //if gas is more than 5% of balance have some safety checks
         await provider?.request(builtTx);
       } catch (error) {
         const badTransactionMessage =

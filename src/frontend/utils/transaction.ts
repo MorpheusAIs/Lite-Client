@@ -84,7 +84,7 @@ export const handleBalanceRequest = async (
 
 const estimateGasWithOverHead = (estimatedGasMaybe: string) => {
   const estimatedGas = parseInt(estimatedGasMaybe, 16);
-  const gasLimitWithOverhead = Math.ceil(estimatedGas * 5);
+  const gasLimitWithOverhead = Math.ceil(estimatedGas * 2.5);
 
   return `0x${gasLimitWithOverhead.toString(16)}`;
 };
