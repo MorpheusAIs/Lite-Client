@@ -81,7 +81,7 @@ const ChatView = (): JSX.Element => {
       updateDialogueEntries(question, message);
     } else {
       try {
-        const builtTx = await handleTransactionRequest(provider, transaction, account);
+        const builtTx = await handleTransactionRequest(provider, transaction, account, question);
         updateDialogueEntries(question, response);
         console.log('from: ' + builtTx.params[0].from);
         await provider?.request(builtTx);

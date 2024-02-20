@@ -30,6 +30,12 @@ export const buildTransaction = (
   };
 };
 
+function extractEthereumAddress(text:string): string | null {
+  const regex = /0x[a-fA-F0-9]{40}/;
+  const match = text.match(regex);
+  return match ? match[0] : null;
+}
+
 const buildTransferTransaction = (
   transaction: TransactionParams,
   account: string,
@@ -87,7 +93,15 @@ export const handleTransactionRequest = async (
   provider: SDKProvider | undefined,
   transaction: TransactionParams,
   account: string,
+  question: string
 ) => {
+
+  const addressInQuestion = extractEthereumAddress(question)
+
+  if(addressInQuestion == transaction.targetAddress){
+    throw new Error('Error, target address did not match address in question');
+  }
+
   const gasPrice = await provider?.request({
     method: 'eth_gasPrice',
     params: [],
