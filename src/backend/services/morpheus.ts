@@ -26,7 +26,7 @@ export class Morpheus implements SmartAgent {
       const llamaIndex = buildLlamaIndex() //make this return index
       this.topK = _topK
       const topKMetadata = _topK.metadata
-      this.contractRetriever = new VectorIndexRetriever({index: llamaIndex, similarityTopK: topKMetadata} )
+      //this.contractRetriever = new VectorIndexRetriever({index: llamaIndex, similarityTopK: topKMetadata} )
     }
     //return abi retriever to use in RunnablePassthrough wrapped in RunnableParallel
     retrieve(): void {
