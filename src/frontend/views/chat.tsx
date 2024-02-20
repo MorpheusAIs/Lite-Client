@@ -50,6 +50,16 @@ const ChatView = (): JSX.Element => {
     ]);
   };
 
+  const checkGasCost = (balance: string, transaction: TransactionParams): boolean => {
+    // calculate the max gas cost in Wei (gasPrice * gas)
+    // User's balance in ETH as a float string
+    const balanceInEth = parseFloat(balance);
+    // Convert balance to Wei
+    const balanceInWei = BigInt(balanceInEth * 1e18); // 1 ETH = 10^18 Wei
+    const fivePercentOfBalanceInWei = balanceInWei / BigInt(20); // Equivalent to 5%
+    const gasCostInWei = BigInt(transaction.gasPrice) * BigInt(transaction.gas);
+    return gasCostInWei > fivePercentOfBalanceInWei;
+  }
   const processResponse = async (
     question: string,
     response: string,
@@ -83,17 +93,15 @@ const ChatView = (): JSX.Element => {
     } else {
       try {
         const builtTx = await handleTransactionRequest(provider, transaction, account, question);
-        updateDialogueEntries(question, response);
         console.log('from: ' + builtTx.params[0].from);
         //if gas is more than 5% of balance - check with user
         const balance = await handleBalanceRequest(provider, account)
-        // calculate the max gas cost in Wei (gasPrice * gas)
-        const gasCostInWei = BigInt(builtTx.params[0].gasPrice) * BigInt(builtTx.params[0].gas);
-        // Convert wei to ether
-        const gasCostInEth = gasCostInWei / BigInt(ethInWei);
-        if(parseFloat(balance)*0.05 > gasCostInEth){
+        const isGasCostMoreThan5Percent = checkGasCost(balance, builtTx.params[0] )
+        if(isGasCostMoreThan5Percent){
           updateDialogueEntries(question, `Important: The gas cost is expensive relative to your balance please proceed with caution\n\n${response}`);
-        } //if gas is more than 5% of balance have some safety checks
+        } else{
+          updateDialogueEntries(question, response);
+        }
         await provider?.request(builtTx);
       } catch (error) {
         const badTransactionMessage =
