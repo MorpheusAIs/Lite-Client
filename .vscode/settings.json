@@ -1,0 +1,17 @@
+{
+    "cSpell.words": [
+        "asar",
+        "codefi",
+        "metafi",
+        "notarytool",
+        "ollama",
+        "qrcode",
+        "relocator",
+        "Roboto",
+        "submod",
+        "svgr"
+    ],
+    "[typescript]": {
+        "editor.tabSize": 2
+    }
+}
