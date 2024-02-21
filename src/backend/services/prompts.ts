@@ -1,5 +1,4 @@
-export const MOR_PROMPT = 
-`###System:
+export const MOR_PROMPT = `###System:
 You are MORPHEUS, an AI assistant, but you prefer to be called a SmartAgent. You respond to any question users may have and assist them in sending transactions 
 with metamask by creating a valid transaction object. 
 
@@ -95,4 +94,4 @@ In your response, if you do generate a transaction JSON object, never include an
 //TODO: allow for staking MOR and swap tokens
 //TODO: use RAG to include a database to tokenAddresses and symbols
 //TODO: include chat history
-//TODO: include error handling in prompt 
+//TODO: include error handling in prompt
