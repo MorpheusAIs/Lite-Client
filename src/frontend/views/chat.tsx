@@ -25,6 +25,7 @@ const ChatView = (): JSX.Element => {
   const [isOllamaBeingPolled, setIsOllamaBeingPolled] = useState(false);
   const { ready, sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
   const ethInWei = '1000000000000000000'
+  const [selectedNetwork, setSelectedNetwork] = useState('');
 
   useEffect(() => {
     window.backendBridge.ollama.onAnswer((response) => {
@@ -151,7 +152,7 @@ const ChatView = (): JSX.Element => {
 
   const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedChain = e.target.value;
-  
+    
     // Check if the default option is selected
     if (!selectedChain) {
       console.log("No network selected.");
@@ -323,19 +324,28 @@ const Chat = {
     }
   `,
     Dropdown: Styled.select`
-    position: absolute;
-    top: 20px; // Adjust based on your layout
-    left: 10px; // Adjust based on your layout
-    padding: 5px 10px;
-    border-radius: 5px;
-    background-color: white;
-    color: black;
-    cursor: pointer;
+      position: absolute;
+      top: 42px;
+      left: 25px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background-color: ${(props) => props.theme.colors.core}; 
+      color: ${(props) => props.theme.colors.notice}; 
+      border: 2px solid ${(props) => props.theme.colors.hunter}; 
+      font-family: ${(props) => props.theme.fonts.family.primary.regular};
+      font-size: ${(props) => props.theme.fonts.size.small};
+      cursor: pointer;
 
-    &:hover {
-      background-color: #f0f0f0;
-    }
-  `,
+      &:hover {
+        border: 2px solid ${(props) => props.theme.colors.emerald};
+      }
+
+      option {
+        background-color: ${(props) => props.theme.colors.core};
+        color: ${(props) => props.theme.colors.emerald};
+      }
+    `,
+
 };
 
 export default ChatView;
