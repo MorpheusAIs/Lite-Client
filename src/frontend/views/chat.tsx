@@ -184,7 +184,7 @@ const ChatView = (): JSX.Element => {
         <option value="">Select a network</option>
         <option value="0x1">Ethereum</option>
         <option value="0xa4b1">Arbitrum</option>
-        <option value="“0xaa36a7">Sepolia</option>
+        <option value="0xaa36a7">Sepolia</option>
         <option value="0x4268">Holesky</option>
       </Chat.Dropdown>
       <Chat.Main>
