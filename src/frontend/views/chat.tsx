@@ -183,7 +183,7 @@ const ChatView = (): JSX.Element => {
       <Chat.Dropdown onChange={handleNetworkChange} value="">
         <option value="">Select a network</option>
         <option value="0x1">Ethereum</option>
-        <option value="0x5">Goerli</option>
+        <option value="0x4268">Holesky</option>
         <option value="0xa4b1">Arbitrum</option>
       </Chat.Dropdown>
       <Chat.Main>
