@@ -16,7 +16,12 @@ import { updateQrCode } from './helpers';
 import ThemeProvider from './theme/theme-provider';
 import GlobalStyle from './theme/index';
 import './index.css';
+
+// context
 import { AIMessagesProvider } from './contexts';
+
+// constants
+import { LOGO_METAMASK_BASE64 } from './constants';
 
 // root
 const rootElement = document.querySelector('#root') as Element;
@@ -104,8 +109,9 @@ const AppRoot = () => {
                 enabled: true,
               },
               dappMetadata: {
-                name: 'MorpheusAI SubMod',
-                url: window.location.host,
+                name: 'Morpheus Node',
+                url: 'https://mor.org',
+                base64Icon: LOGO_METAMASK_BASE64,
               },
               modals: {
                 install: ({ link }) => {
