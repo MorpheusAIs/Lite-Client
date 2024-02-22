@@ -162,6 +162,9 @@ export const askOllama = async (model: string, message: string) => {
 export const getOrPullModel = async (model: string) => {
   await installModelWithStatus(model);
 
+  // init the model on pull to load into memory
+  await ollama.chat({ model });
+
   return findModel(model);
 };
 
