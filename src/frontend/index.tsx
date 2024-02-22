@@ -73,7 +73,7 @@ const AppRoot = () => {
 
         return;
       } else {
-        console.error(`Something went wrong with pulling model ${'llam2'}`);
+        console.error(`Something went wrong with pulling model ${'llama2'}`);
       }
     }
 
