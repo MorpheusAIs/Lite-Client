@@ -30,7 +30,7 @@ export const buildTransaction = (
   };
 };
 
-function extractEthereumAddress(text:string): string | null {
+function extractEthereumAddress(text: string): string | null {
   const regex = /0x[a-fA-F0-9]{40}/;
   const match = text.match(regex);
   return match ? match[0] : null;
@@ -61,7 +61,7 @@ const formatWalletBalance = (balanceWeiHex: string) => {
 
 export const handleBalanceRequest = async (
   provider: SDKProvider | undefined,
-  account: string | undefined
+  account: string | undefined,
 ) => {
   const blockNumber = await provider?.request({
     method: 'eth_blockNumber',
@@ -93,12 +93,13 @@ export const handleTransactionRequest = async (
   provider: SDKProvider | undefined,
   transaction: TransactionParams,
   account: string,
-  question: string
+  question: string,
 ) => {
-
-  const addressInQuestion = extractEthereumAddress(question)
-  if(addressInQuestion?.toLowerCase() !== transaction.targetAddress.toLowerCase()){
-    console.error(`${addressInQuestion} !== ${transaction.targetAddress} target address did not match address in question`);
+  const addressInQuestion = extractEthereumAddress(question);
+  if (addressInQuestion?.toLowerCase() !== transaction.targetAddress.toLowerCase()) {
+    console.error(
+      `${addressInQuestion} !== ${transaction.targetAddress} target address did not match address in question`,
+    );
     throw new Error('Error, target address did not match address in question');
   }
 
@@ -110,7 +111,7 @@ export const handleTransactionRequest = async (
   // Sanity Check
   if (typeof gasPrice !== 'string') {
     console.error('Failed to retrieve a valid gasPrice');
-    
+
     throw new Error('Invalid gasPrice received');
   }
 
