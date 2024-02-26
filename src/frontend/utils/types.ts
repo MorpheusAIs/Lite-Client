@@ -1,13 +1,13 @@
 export type ModelResponse = {
   response: string;
-  transaction: TransactionParams;
+  action: ActionParams;
 };
 
-export type TransactionParams = {
+export type ActionParams = {
   [key: string]: string;
 };
 
-export type Transaction = {
+export type TransferAction = {
   from: string;
   to: string;
   gas: string;

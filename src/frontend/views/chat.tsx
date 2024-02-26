@@ -10,12 +10,12 @@ import { OllamaChannel } from './../../events';
 import { useAIMessagesContext } from '../contexts';
 
 import {
-  isTransactionInitiated,
+  isActionInitiated,
   handleBalanceRequest,
   handleTransactionRequest,
 } from '../utils/transaction';
 import { parseResponse } from '../utils/utils';
-import { TransactionParams } from '../utils/types';
+import { ActionParams } from '../utils/types';
 
 const ChatView = (): JSX.Element => {
   const [selectedModel, setSelectedModel] = useState('llama2');
@@ -51,7 +51,7 @@ const ChatView = (): JSX.Element => {
     ]);
   };
 
-  const checkGasCost = (balance: string, transaction: TransactionParams): boolean => {
+  const checkGasCost = (balance: string, transaction: ActionParams): boolean => {
     // calculate the max gas cost in Wei (gasPrice * gas)
     // User's balance in ETH as a float string
     const balanceInEth = parseFloat(balance);
@@ -64,12 +64,12 @@ const ChatView = (): JSX.Element => {
   const processResponse = async (
     question: string,
     response: string,
-    transaction: TransactionParams | undefined,
+    action: ActionParams | undefined,
   ) => {
-    if (transaction == undefined) {
-      transaction = {};
+    if (action == undefined) {
+      action = {};
     }
-    if (!isTransactionInitiated(transaction)) {
+    if (!isActionInitiated(action)) {
       updateDialogueEntries(question, response); //no additional logic in this case
 
       return;
@@ -83,7 +83,7 @@ const ChatView = (): JSX.Element => {
       return;
     }
 
-    switch (transaction.type.toLowerCase()) {
+    switch (action.type.toLowerCase()) {
       case 'balance':
         let message: string;
         try {
@@ -96,7 +96,7 @@ const ChatView = (): JSX.Element => {
 
       case 'transfer':
         try {
-          const builtTx = await handleTransactionRequest(provider, transaction, account, question);
+          const builtTx = await handleTransactionRequest(provider, action, account, question);
           console.log('from: ' + builtTx.params[0].from);
           //if gas is more than 5% of balance - check with user
           const balance = await handleBalanceRequest(provider, account);
@@ -119,7 +119,7 @@ const ChatView = (): JSX.Element => {
 
       default:
         // If the transaction type is not recognized, we will not proceed with the transaction.
-        const errorMessage = `Error: Invalid transaction type: ${transaction.type}`;
+        const errorMessage = `Error: Invalid transaction type: ${action.type}`;
         updateDialogueEntries(question, errorMessage);
     }
   };
@@ -146,11 +146,11 @@ const ChatView = (): JSX.Element => {
 
     console.log(inference);
     if (inference) {
-      const { response, transaction } = parseResponse(inference.message.content);
+      const { response, action: action } = parseResponse(inference.message.content);
       if (response == 'error') {
         updateDialogueEntries(question, 'Sorry, I had a problem with your request.');
       } else {
-        await processResponse(question, response, transaction);
+        await processResponse(question, response, action);
       }
     }
 
