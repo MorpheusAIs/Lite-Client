@@ -6,7 +6,7 @@ Keep your response short, using 2 or 3 sentences maximum.
 
 Respond in a valid JSON without comments to be consumed by an application following this pattern:
 {"response", "your response goes here", "transaction", "user transaction object goes here"}. 
-Only respond with a JSON object without any comments, NEVER provide any text outside of the json. Your respond only in a valid JSON. 
+Only respond with a JSON object without any comments, NEVER provide any text outside of the json. You respond only in a valid JSON. 
 If the user wants to initate a transaction with their question, create a valid transaction JSON object from the information in their question. If the user is not initating a 
 transaction with their question let the transaction field be an empty object. Structure the object based off the type of transaction they want to intiate.
 

@@ -83,35 +83,44 @@ const ChatView = (): JSX.Element => {
       return;
     }
 
-    if (transaction.type.toLowerCase() === 'balance') {
-      let message: string;
-      try {
-        message = await handleBalanceRequest(provider, account);
-      } catch (error) {
-        message = `Error: Failed to retrieve a valid balance from Metamask, try reconnecting.`;
-      }
-      updateDialogueEntries(question, message);
-    } else {
-      try {
-        const builtTx = await handleTransactionRequest(provider, transaction, account, question);
-        console.log('from: ' + builtTx.params[0].from);
-        //if gas is more than 5% of balance - check with user
-        const balance = await handleBalanceRequest(provider, account);
-        const isGasCostMoreThan5Percent = checkGasCost(balance, builtTx.params[0]);
-        if (isGasCostMoreThan5Percent) {
-          updateDialogueEntries(
-            question,
-            `Important: The gas cost is expensive relative to your balance please proceed with caution\n\n${response}`,
-          );
-        } else {
-          updateDialogueEntries(question, response);
+    switch (transaction.type.toLowerCase()) {
+      case 'balance':
+        let message: string;
+        try {
+          message = await handleBalanceRequest(provider, account);
+        } catch (error) {
+          message = `Error: Failed to retrieve a valid balance from Metamask, try reconnecting.`;
         }
-        await provider?.request(builtTx);
-      } catch (error) {
-        const badTransactionMessage =
-          'Error: There was an error sending your transaction, if the transaction type is balance or transfer please reconnect to metamask';
-        updateDialogueEntries(question, badTransactionMessage);
-      }
+        updateDialogueEntries(question, message);
+        break;
+
+      case 'transfer':
+        try {
+          const builtTx = await handleTransactionRequest(provider, transaction, account, question);
+          console.log('from: ' + builtTx.params[0].from);
+          //if gas is more than 5% of balance - check with user
+          const balance = await handleBalanceRequest(provider, account);
+          const isGasCostMoreThan5Percent = checkGasCost(balance, builtTx.params[0]);
+          if (isGasCostMoreThan5Percent) {
+            updateDialogueEntries(
+              question,
+              `Important: The gas cost is expensive relative to your balance please proceed with caution\n\n${response}`,
+            );
+          } else {
+            updateDialogueEntries(question, response);
+          }
+          await provider?.request(builtTx);
+        } catch (error) {
+          const badTransactionMessage =
+            'Error: There was an error sending your transaction, if the transaction type is balance or transfer please reconnect to metamask';
+          updateDialogueEntries(question, badTransactionMessage);
+        }
+        break;
+
+      default:
+        // If the transaction type is not recognized, we will not proceed with the transaction.
+        const errorMessage = `Error: Invalid transaction type: ${transaction.type}`;
+        updateDialogueEntries(question, errorMessage);
     }
   };
 
