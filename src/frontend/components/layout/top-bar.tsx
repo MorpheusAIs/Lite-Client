@@ -1,5 +1,5 @@
 // libs
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Styled from 'styled-components';
 import { useSDK } from '@metamask/sdk-react';
 
@@ -7,15 +7,20 @@ import { useSDK } from '@metamask/sdk-react';
 import MetaMaskModal from '../modals/metamask-modal';
 import ConnectWalletButton from '../buttons/connect-wallet-button';
 
-// custonm hooks
+// custom hooks
 import { useClickOutside } from '../../hooks';
 
 // img
 import logo from './../../assets/images/logo_white.png';
+import chevronDown from '../../assets/images/chevron-down.png';
 import close from './../../assets/images/close.svg';
 import minimize from './../../assets/images/minimize.svg';
 
+// constants
+import { ETHEREUM_CHAINS, EthereumChain } from '../../constants';
+
 export default () => {
+  const [selectedNetwork, setSelectedNetwork] = useState<string>('');
   const { ready, sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
   const [metamaskVisible, setMetamaskVisible] = useState(false);
 
@@ -27,6 +32,12 @@ export default () => {
       setMetamaskVisible(false);
     }
   });
+
+  useEffect(() => {
+    if (chainId) {
+      setSelectedNetwork(chainId);
+    }
+  }, [chainId]);
 
   const connect = async () => {
     try {
@@ -60,6 +71,48 @@ export default () => {
     window.backendBridge.main.minimize();
   };
 
+  const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedChain = e.target.value;
+
+    // Check if the default option is selected
+    if (!selectedChain) {
+      console.log('No network selected.');
+      return; // Early return to avoid further execution
+    }
+
+    // Sanity Checks:
+    if (!account || !provider) {
+      const errorMessage = `Error: Please connect to MetaMask`;
+
+      return;
+    }
+
+    const chain = ETHEREUM_CHAINS[selectedChain];
+
+    try {
+      await provider.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: selectedChain,
+            chainName: chain.chainName,
+            nativeCurrency: chain.nativeCurrency,
+            rpcUrls: chain.rpcUrls,
+          },
+        ],
+      });
+
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: selectedChain }],
+      });
+
+      setSelectedNetwork(selectedChain);
+    } catch (error) {
+      console.error('Failed to switch networks:', error);
+    }
+  };
+
   return (
     <TopBar.Layout>
       <TopBar.Draggable />
@@ -73,6 +126,20 @@ export default () => {
           <TopBar.Header>Morpheus</TopBar.Header>
         </TopBar.Middle>
         <TopBar.Right>
+          {connected && (
+            <TopBar.Dropdown onChange={handleNetworkChange} value={selectedNetwork}>
+              <option value="" style={{ display: 'none' }}>
+                select a network
+              </option>
+              {Object.entries(ETHEREUM_CHAINS).map((value, index) => {
+                return (
+                  <option value={value[0]} key={`network-${index}`}>
+                    {value[1].chainName}
+                  </option>
+                );
+              })}
+            </TopBar.Dropdown>
+          )}
           <ConnectWalletButton
             {...{ connected, connecting, onClick: onConnectClicked }}
             ref={metamaskButtonRef}
@@ -162,5 +229,42 @@ const TopBar = {
     color: ${(props) => props.theme.colors.balance};
     position: absolute;
     bottom: 10px;
+  `,
+  Dropdown: Styled.select`
+    display: flex;
+    padding: 0 15px;
+    margin-right: 20px;
+    border-radius: 30px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    transition: all 0.5s;
+    background: url('${chevronDown}') calc(100% - 15px) center no-repeat;
+    background-size: 15px;
+    padding-right: 40px;
+    color: ${(props) => props.theme.colors.notice}; 
+    border: 2px solid ${(props) => props.theme.colors.hunter}; 
+    font-family: ${(props) => props.theme.fonts.family.primary.regular};
+    font-size: ${(props) => props.theme.fonts.size.small};
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    pointer-events: all;
+
+    &:hover {
+      border: 2px solid ${(props) => props.theme.colors.emerald};
+    }
+
+    option {
+      background-color: ${(props) => props.theme.colors.core};
+      color: ${(props) => props.theme.colors.emerald};
+
+      &:hover, &:checked {
+        background-color: ${(props) => props.theme.colors.emerald};
+        color: ${(props) => props.theme.colors.notice};
+      }
+    }
   `,
 };
