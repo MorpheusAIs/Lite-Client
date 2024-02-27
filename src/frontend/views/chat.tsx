@@ -10,12 +10,12 @@ import { OllamaChannel } from './../../events';
 import { useAIMessagesContext } from '../contexts';
 
 import {
-  isTransactionInitiated,
+  isActionInitiated,
   handleBalanceRequest,
   handleTransactionRequest,
 } from '../utils/transaction';
 import { parseResponse } from '../utils/utils';
-import { TransactionParams } from '../utils/types';
+import { ActionParams } from '../utils/types';
 
 const ChatView = (): JSX.Element => {
   const [selectedModel, setSelectedModel] = useState('llama2');
@@ -24,7 +24,7 @@ const ChatView = (): JSX.Element => {
   const [currentQuestion, setCurrentQuestion] = useState<AIMessage>();
   const [isOllamaBeingPolled, setIsOllamaBeingPolled] = useState(false);
   const { ready, sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
-  const ethInWei = '1000000000000000000'
+  const ethInWei = '1000000000000000000';
   const [selectedNetwork, setSelectedNetwork] = useState('');
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const ChatView = (): JSX.Element => {
     ]);
   };
 
-  const checkGasCost = (balance: string, transaction: TransactionParams): boolean => {
+  const checkGasCost = (balance: string, transaction: ActionParams): boolean => {
     // calculate the max gas cost in Wei (gasPrice * gas)
     // User's balance in ETH as a float string
     const balanceInEth = parseFloat(balance);
@@ -60,16 +60,16 @@ const ChatView = (): JSX.Element => {
     const fivePercentOfBalanceInWei = balanceInWei / BigInt(20); // Equivalent to 5%
     const gasCostInWei = BigInt(transaction.gasPrice) * BigInt(transaction.gas);
     return gasCostInWei > fivePercentOfBalanceInWei;
-  }
+  };
   const processResponse = async (
     question: string,
     response: string,
-    transaction: TransactionParams | undefined,
+    action: ActionParams | undefined,
   ) => {
-    if(transaction == undefined){
-      transaction = {}
+    if (action == undefined) {
+      action = {};
     }
-    if (!isTransactionInitiated(transaction)) {
+    if (!isActionInitiated(action)) {
       updateDialogueEntries(question, response); //no additional logic in this case
 
       return;
@@ -83,32 +83,44 @@ const ChatView = (): JSX.Element => {
       return;
     }
 
-    if (transaction.type.toLowerCase() === 'balance') {
-      let message: string;
-      try {
-        message = await handleBalanceRequest(provider, account);
-      } catch (error) {
-        message = `Error: Failed to retrieve a valid balance from Metamask, try reconnecting.`;
-      }
-      updateDialogueEntries(question, message);
-    } else {
-      try {
-        const builtTx = await handleTransactionRequest(provider, transaction, account, question);
-        console.log('from: ' + builtTx.params[0].from);
-        //if gas is more than 5% of balance - check with user
-        const balance = await handleBalanceRequest(provider, account)
-        const isGasCostMoreThan5Percent = checkGasCost(balance, builtTx.params[0] )
-        if(isGasCostMoreThan5Percent){
-          updateDialogueEntries(question, `Important: The gas cost is expensive relative to your balance please proceed with caution\n\n${response}`);
-        } else{
-          updateDialogueEntries(question, response);
+    switch (action.type.toLowerCase()) {
+      case 'balance':
+        let message: string;
+        try {
+          message = await handleBalanceRequest(provider, account);
+        } catch (error) {
+          message = `Error: Failed to retrieve a valid balance from Metamask, try reconnecting.`;
         }
-        await provider?.request(builtTx);
-      } catch (error) {
-        const badTransactionMessage =
-          'Error: There was an error sending your transaction, if the transaction type is balance or transfer please reconnect to metamask';
-        updateDialogueEntries(question, badTransactionMessage);
-      }
+        updateDialogueEntries(question, message);
+        break;
+
+      case 'transfer':
+        try {
+          const builtTx = await handleTransactionRequest(provider, action, account, question);
+          console.log('from: ' + builtTx.params[0].from);
+          //if gas is more than 5% of balance - check with user
+          const balance = await handleBalanceRequest(provider, account);
+          const isGasCostMoreThan5Percent = checkGasCost(balance, builtTx.params[0]);
+          if (isGasCostMoreThan5Percent) {
+            updateDialogueEntries(
+              question,
+              `Important: The gas cost is expensive relative to your balance please proceed with caution\n\n${response}`,
+            );
+          } else {
+            updateDialogueEntries(question, response);
+          }
+          await provider?.request(builtTx);
+        } catch (error) {
+          const badTransactionMessage =
+            'Error: There was an error sending your transaction, if the transaction type is balance or transfer please reconnect to metamask';
+          updateDialogueEntries(question, badTransactionMessage);
+        }
+        break;
+
+      default:
+        // If the transaction type is not recognized, we will not proceed with the transaction.
+        const errorMessage = `Error: Invalid transaction type: ${action.type}`;
+        updateDialogueEntries(question, errorMessage);
     }
   };
 
@@ -132,14 +144,13 @@ const ChatView = (): JSX.Element => {
       query: question,
     });
 
-    console.log(inference)
+    console.log(inference);
     if (inference) {
-      const { response, transaction } = parseResponse(inference.message.content);
-      if(response == "error"){
-        updateDialogueEntries(question,"Sorry, I had a problem with your request.");
-      }
-      else {
-        await processResponse(question, response, transaction);
+      const { response, action: action } = parseResponse(inference.message.content);
+      if (response == 'error') {
+        updateDialogueEntries(question, 'Sorry, I had a problem with your request.');
+      } else {
+        await processResponse(question, response, action);
       }
     }
 
@@ -155,28 +166,27 @@ const ChatView = (): JSX.Element => {
 
     // Check if the default option is selected
     if (!selectedChain) {
-      console.log("No network selected.");
+      console.log('No network selected.');
       return; // Early return to avoid further execution
     }
-  
+
     // Sanity Checks:
     if (!account || !provider) {
       const errorMessage = `Error: Please connect to MetaMask`;
-      updateDialogueEntries("", errorMessage);
+      updateDialogueEntries('', errorMessage);
       return;
     }
-  
+
     try {
       const response = await provider.request({
-        method: "wallet_switchEthereumChain",
+        method: 'wallet_switchEthereumChain',
         params: [{ chainId: selectedChain }],
       });
-      console.log(response)
+      console.log(response);
     } catch (error) {
-      console.error("Failed to switch networks:", error);
+      console.error('Failed to switch networks:', error);
     }
   };
-  
 
   return (
     <Chat.Layout>
@@ -324,7 +334,7 @@ const Chat = {
       background: ${(props) => props.theme.colors.emerald};
     }
   `,
-    Dropdown: Styled.select`
+  Dropdown: Styled.select`
       position: absolute;
       top: 42px;
       left: 25px;
@@ -346,7 +356,6 @@ const Chat = {
         color: ${(props) => props.theme.colors.emerald};
       }
     `,
-
 };
 
 export default ChatView;
