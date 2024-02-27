@@ -73,6 +73,7 @@
     "webpack-permissions-plugin": "^1.0.9"
   },
   "dependencies": {
+    "@langchain/community": "^0.0.32",
     "@metamask/sdk": "^0.14.2",
     "@metamask/sdk-react": "^0.14.2",
     "@metamask/sdk-react-ui": "^0.14.3",
@@ -81,6 +82,8 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
     "ethers": "^6.11.1",
+    "langchain": "^0.1.22",
+    "llamaindex": "^0.1.17",
     "ollama": "^0.4.3",
     "qrcode": "^1.5.3",
     "react-loader-spinner": "^6.1.6",

@@ -5,6 +5,18 @@ import fs from 'fs';
 import { sendOllamaStatusToRenderer } from '..';
 import { MOR_PROMPT } from './prompts';
 
+import { RAG_MOR_PROMPT } from './prompts';
+import {
+  ChatPromptTemplate,
+  SystemMessagePromptTemplate,
+  HumanMessagePromptTemplate,
+} from '@langchain/core/prompts';
+import { RunnableParallel, RunnableSequence, RunnablePassthrough } from '@langchain/core/runnables';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+
+// Imports
+import { contractAbiRetriever, metamaskExamplesRetriever } from './rag';
+
 // events
 import { IpcMainChannel } from '../../events';
 import {
@@ -157,6 +169,38 @@ export const askOllama = async (model: string, message: string) => {
       },
     ],
   });
+};
+
+export const askOllamaRAG = async (model: string, message: string) => {
+  
+  // Load Prompt Template
+  let promptTemplate = RAG_MOR_PROMPT;
+  let NLQ = message;
+
+  // Loading Messages
+  const messages = [
+    SystemMessagePromptTemplate.fromTemplate(promptTemplate),
+    HumanMessagePromptTemplate.fromTemplate('{nlq}'),
+  ];
+
+  // Chat Prompt Template
+  const prompt = ChatPromptTemplate.fromMessages(messages);
+
+  // Create Chain
+  const chain = RunnableParallel.from([
+    {
+      nlq: new RunnablePassthrough(),
+      context: contractAbiRetriever,
+      metamask_examples: metamaskExamplesRetriever,
+    },
+    prompt,
+    model,
+    new StringOutputParser(),
+  ]);
+
+  // Invoke the Chain for the NLQ response from the AI
+  return await chain.invoke({ nlq: NLQ });
+  
 };
 
 export const getOrPullModel = async (model: string) => {
