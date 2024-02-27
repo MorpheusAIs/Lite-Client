@@ -16,6 +16,7 @@ import {
 } from '../utils/transaction';
 import { parseResponse } from '../utils/utils';
 import { ActionParams } from '../utils/types';
+import { getChainInfoByChainId } from '../utils/chain';
 
 const ChatView = (): JSX.Element => {
   const [selectedModel, setSelectedModel] = useState('llama2');
@@ -184,7 +185,16 @@ const ChatView = (): JSX.Element => {
       });
       console.log(response);
     } catch (error) {
-      console.error('Failed to switch networks:', error);
+      //if switch chain fails then add the chain
+      try {
+        const chainInfo = getChainInfoByChainId(selectedChain);
+        const response = await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [chainInfo],
+        });
+      } catch (error) {
+        console.error('Failed to switch networks:', error);
+      }
     }
   };
 
@@ -193,8 +203,9 @@ const ChatView = (): JSX.Element => {
       <Chat.Dropdown onChange={handleNetworkChange} value="">
         <option value="">Select a network</option>
         <option value="0x1">Ethereum</option>
-        <option value="0x4268">Holesky</option>
+        <option value="0xaa36a7">Sepolia</option>
         <option value="0xa4b1">Arbitrum</option>
+        <option value="0x64">Gnosis</option>
       </Chat.Dropdown>
       <Chat.Main>
         {dialogueEntries.map((entry, index) => {
