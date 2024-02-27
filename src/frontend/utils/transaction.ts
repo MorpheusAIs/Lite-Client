@@ -1,23 +1,19 @@
 import { ethers } from 'ethers';
 import { SDKProvider } from '@metamask/sdk';
-import { Transaction, TransactionParams } from './types';
+import { TransferAction, ActionParams } from './types';
 
-export const isTransactionInitiated = (transaction: TransactionParams) => {
-  return !(Object.keys(transaction).length === 0);
+export const isActionInitiated = (action: ActionParams) => {
+  return !(Object.keys(action).length === 0);
 };
 
-export const buildTransaction = (
-  transaction: TransactionParams,
-  account: string,
-  gasPrice: string,
-) => {
-  const transactionType = transaction.type.toLowerCase();
+export const buildAction = (action: ActionParams, account: string, gasPrice: string) => {
+  const transactionType = action.type.toLowerCase();
 
-  let tx: Transaction;
+  let tx: TransferAction;
 
   switch (transactionType) {
     case 'transfer':
-      tx = buildTransferTransaction(transaction, account, gasPrice);
+      tx = buildTransferTransaction(action, account, gasPrice);
       break;
     default:
       throw Error(`Transaction of type ${transactionType} is not yet supported`);
@@ -37,16 +33,16 @@ function extractEthereumAddress(text: string): string | null {
 }
 
 const buildTransferTransaction = (
-  transaction: TransactionParams,
+  action: ActionParams,
   account: string,
   gasPrice: any,
-): Transaction => {
+): TransferAction => {
   return {
     from: account,
-    to: transaction.targetAddress,
+    to: action.targetAddress,
     gas: '0x76c0', //for more complex tasks estimate this from metamast
     gasPrice: gasPrice,
-    value: '0x' + ethers.parseEther(transaction.ethAmount).toString(16),
+    value: '0x' + ethers.parseEther(action.ethAmount).toString(16),
     data: '0x000000',
   };
 };
@@ -91,7 +87,7 @@ const estimateGasWithOverHead = (estimatedGasMaybe: string) => {
 
 export const handleTransactionRequest = async (
   provider: SDKProvider | undefined,
-  transaction: TransactionParams,
+  transaction: ActionParams,
   account: string,
   question: string,
 ) => {
@@ -115,7 +111,7 @@ export const handleTransactionRequest = async (
     throw new Error('Invalid gasPrice received');
   }
 
-  const builtTx = buildTransaction(transaction, account, gasPrice);
+  const builtTx = buildAction(transaction, account, gasPrice);
 
   const estimatedGas = await provider?.request({
     method: 'eth_estimateGas',

@@ -16,17 +16,17 @@ export const parseResponse = (jsonString: string) => {
       parsed = JSON.parse(jsonString);
     } catch (error) {
       new Error('Ollama error');
-      return { response: 'error', transaction: {} };
+      return { response: 'error', action: {} };
     }
   }
 
   if (isModelResponse(parsed)) {
-    return { response: parsed.response, transaction: parsed.transaction };
+    return { response: parsed.response, action: parsed.action };
   } else {
     throw new Error('Invalid ModelResponse format');
   }
 };
 
 const isModelResponse = (object: any): object is ModelResponse => {
-  return 'response' in object && 'transaction' in object;
+  return 'response' in object && 'action' in object;
 };
