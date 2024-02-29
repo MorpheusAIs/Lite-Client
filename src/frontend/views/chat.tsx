@@ -1,5 +1,5 @@
 // libs
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState, useRef } from 'react';
 import Styled from 'styled-components';
 import { useSDK } from '@metamask/sdk-react';
 import { ThreeDots } from 'react-loader-spinner';
@@ -28,6 +28,9 @@ const ChatView = (): JSX.Element => {
   const ethInWei = '1000000000000000000';
   const [selectedNetwork, setSelectedNetwork] = useState('');
 
+  const chatMainRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     window.backendBridge.ollama.onAnswer((response) => {
       setDialogueEntries([
@@ -42,6 +45,32 @@ const ChatView = (): JSX.Element => {
       window.backendBridge.removeAllListeners(OllamaChannel.OllamaAnswer);
     };
   });
+
+  // Scroll to bottom of chat when user adds new dialogue
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (chatMainRef.current && mutation.type === 'childList') {
+          chatMainRef.current.scrollTop = chatMainRef.current.scrollHeight;
+        }
+      }
+    });
+
+    if (chatMainRef.current) {
+      observer.observe(chatMainRef?.current, {
+        childList: true, // observe direct children
+      });
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Refocus onto input field once new dialogue entry is added
+  useEffect(() => {
+    if (chatInputRef.current) {
+      chatInputRef.current.focus();
+    }
+  }, [dialogueEntries]); //
 
   //Function to update dialogue entries
   const updateDialogueEntries = (question: string, message: string) => {
@@ -211,7 +240,7 @@ const ChatView = (): JSX.Element => {
         <option value="0xa4b1">Arbitrum</option>
         <option value="0x64">Gnosis</option>
       </Chat.Dropdown>
-      <Chat.Main>
+      <Chat.Main ref={chatMainRef}>
         {dialogueEntries.map((entry, index) => {
           return (
             <Chat.QuestionWrapper
@@ -236,6 +265,7 @@ const ChatView = (): JSX.Element => {
         <Chat.InputWrapper>
           <Chat.Arrow>&gt;</Chat.Arrow>
           <Chat.Input
+            ref={chatInputRef}
             disabled={isOllamaBeingPolled}
             value={inputValue}
             onChange={handleQuestionChange}

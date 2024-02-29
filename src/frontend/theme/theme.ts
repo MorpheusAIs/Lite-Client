@@ -8,6 +8,7 @@ export interface ITheme {
   };
   layout: {
     topBarHeight: number;
+    bottomBarHeight: number;
   };
   fonts: {
     family: {
@@ -38,8 +39,8 @@ const common = {
     balance: '#FFFFFF',
   },
   layout: {
-    leftBarWidth: 200,
     topBarHeight: 130,
+    bottomBarHeight: 130,
   },
   fonts: {
     size: {
