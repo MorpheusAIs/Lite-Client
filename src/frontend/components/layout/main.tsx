@@ -38,11 +38,13 @@ const Main = {
     display: flex;
     width: 100%;
     height: ${(props) => props.theme.layout.topBarHeight}px;
+    flex-shrink: 0;
   `,
   MainWrapper: Styled.div`
     display: flex;
     width: 80%;
     height: 70%;
+    flex-grow: 1;
     border-radius: 30px;
     border: 5px solid ${(props) => props.theme.colors.hunter};
     padding: 10px;
@@ -50,6 +52,7 @@ const Main = {
   BottomWrapper: Styled.div`
     display: flex;
     width: 100%;
-    height: 20%;
+    height:  ${(props) => props.theme.layout.bottomBarHeight}px;
+    flex-shrink: 0;
   `,
 };
