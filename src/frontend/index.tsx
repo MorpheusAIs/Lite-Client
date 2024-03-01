@@ -119,8 +119,6 @@ const AppRoot = () => {
 
                   return {
                     mount: () => {
-                      if (modalContainer) return;
-
                       modalContainer = document.createElement('div');
 
                       modalContainer.id = 'meta-mask-modal-container';
