@@ -5,7 +5,7 @@ import Styled from 'styled-components';
 // helpers
 // import { truncateString } from '../helpers';
 
-const SettingsView = (): JSX.Element => {
+const UnderConstructionView = (): JSX.Element => {
   // const { ready, sdk, connected, connecting, provider, chainId, account, balance } =
   //   useSDK();
 
@@ -53,4 +53,4 @@ const Settings = {
   `,
 };
 
-export default SettingsView;
+export default UnderConstructionView;

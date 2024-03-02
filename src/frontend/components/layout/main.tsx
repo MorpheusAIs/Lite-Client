@@ -9,18 +9,25 @@ import BottomBar from './bottom-bar';
 // router
 import { MainRouter } from '../../router';
 
+import SidebarComponent from './sidebar';
+import SidebarToggle from './sidebar-toggle';
+
 export default () => {
   return (
     <Main.Layout>
-      <Main.TopWrapper>
-        <TopBar />
-      </Main.TopWrapper>
-      <Main.MainWrapper>
-        <MainRouter />
-      </Main.MainWrapper>
-      <Main.BottomWrapper>
-        <BottomBar />
-      </Main.BottomWrapper>
+      <SidebarComponent />
+      <SidebarToggle />
+      <Main.Content>
+        <Main.TopWrapper>
+          <TopBar />
+        </Main.TopWrapper>
+        <Main.MainWrapper>
+          <MainRouter />
+        </Main.MainWrapper>
+        <Main.BottomWrapper>
+          <BottomBar />
+        </Main.BottomWrapper>
+      </Main.Content>
     </Main.Layout>
   );
 };
@@ -28,9 +35,16 @@ export default () => {
 const Main = {
   Layout: Styled.div`
     display: flex;
-    flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
+    background: ${(props) => props.theme.colors.core};
+  `,
+  Content: Styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
     height: 100%;
     background: ${(props) => props.theme.colors.core};
   `,
@@ -48,6 +62,7 @@ const Main = {
     border-radius: 30px;
     border: 5px solid ${(props) => props.theme.colors.hunter};
     padding: 10px;
+    overflow: hidden;
   `,
   BottomWrapper: Styled.div`
     display: flex;

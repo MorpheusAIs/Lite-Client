@@ -233,13 +233,13 @@ const ChatView = (): JSX.Element => {
 
   return (
     <Chat.Layout>
-      <Chat.Dropdown onChange={handleNetworkChange} value="">
+      {/* <Chat.Dropdown onChange={handleNetworkChange} value="">
         <option value="">Select a network</option>
         <option value="0x1">Ethereum</option>
         <option value="0xaa36a7">Sepolia</option>
         <option value="0xa4b1">Arbitrum</option>
         <option value="0x64">Gnosis</option>
-      </Chat.Dropdown>
+      </Chat.Dropdown> */}
       <Chat.Main ref={chatMainRef}>
         {dialogueEntries.map((entry, index) => {
           return (

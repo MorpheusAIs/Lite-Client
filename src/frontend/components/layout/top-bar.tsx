@@ -69,7 +69,7 @@ export default () => {
           <TopBar.MinimizeButton onClick={onMinimizeClicked} /> */}
         </TopBar.Left>
         <TopBar.Middle>
-          <TopBar.Logo src={logo} />
+          {/* <TopBar.Logo src={logo} />*/}
           <TopBar.Header>Morpheus</TopBar.Header>
         </TopBar.Middle>
         <TopBar.Right>
@@ -149,11 +149,6 @@ const TopBar = {
     width: 25px;
     height: 25px;
     cursor: pointer;
-  `,
-  Logo: Styled.img`
-    display: flex;
-    height: 100px;
-    width: 100px;
   `,
   Header: Styled.h2`
     font-size: ${(props) => props.theme.fonts.size.medium};

@@ -5,15 +5,18 @@ import Styled from 'styled-components';
 
 // views
 // import HomeView from './views/home';
-import SettingsView from './views/settings';
+import UnderConstruction from './views/underConstruction';
 import ChatView from './views/chat';
 
 export const RoutesWrapper = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/chat" />} />
-      <Route path="/settings" Component={SettingsView} />
+      <Route path="/wallet" Component={UnderConstruction} />
       <Route path="/chat" Component={ChatView} />
+      <Route path="/models" Component={UnderConstruction} />
+      <Route path="/agents" Component={UnderConstruction} />
+      <Route path="/provider" Component={UnderConstruction} />
+      <Route path="/session" Component={UnderConstruction} />
     </Routes>
   );
 };

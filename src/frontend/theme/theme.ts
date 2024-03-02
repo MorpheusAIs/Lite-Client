@@ -5,6 +5,8 @@ export interface ITheme {
     hunter: string;
     notice: string;
     balance: string;
+    black: string;
+    gray: string;
   };
   layout: {
     topBarHeight: number;
@@ -37,6 +39,8 @@ const common = {
     hunter: '#106F48',
     notice: '#FDB366',
     balance: '#FFFFFF',
+    black: '#000000',
+    gray: '#B0B0B0',
   },
   layout: {
     topBarHeight: 130,
