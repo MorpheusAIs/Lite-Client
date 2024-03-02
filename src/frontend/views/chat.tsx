@@ -313,10 +313,10 @@ const Chat = {
     margin-bottom: 20px;
   `,
   Question: Styled.span`
-    display: flex;
     color: ${(props) => props.theme.colors.notice};
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
+    word-wrap: break-word;
     margin-bottom: 5px;
   `,
   Answer: Styled.span`
@@ -348,7 +348,7 @@ const Chat = {
     width: 100%;
     height: 40px;
     border-radius: 30px;
-    padding: 0 25px;
+    padding: 0 40px 0 25px;
     background: ${(props) => props.theme.colors.core};
     border: 2px solid ${(props) => props.theme.colors.hunter};
     color: ${(props) => props.theme.colors.notice};
