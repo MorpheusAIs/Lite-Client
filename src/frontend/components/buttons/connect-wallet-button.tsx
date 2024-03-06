@@ -23,7 +23,6 @@ export default forwardRef<HTMLDivElement>((props: Props, ref) => {
     <ConnectWalletButton.Wrapper onClick={onClick} ref={ref}>
       <ConnectWalletButton.Logo src={wallet} />
       <ConnectWalletButton.Text>{connected ? 'connected' : 'connect'}</ConnectWalletButton.Text>
-      {!connecting && <ConnectWalletButton.Badge $connected={connected} $connecting={connecting} />}
     </ConnectWalletButton.Wrapper>
   );
 });

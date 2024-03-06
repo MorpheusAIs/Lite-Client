@@ -48,6 +48,7 @@ const Main = {
     border-radius: 30px;
     border: 5px solid ${(props) => props.theme.colors.hunter};
     padding: 10px;
+    overflow: hidden;
   `,
   BottomWrapper: Styled.div`
     display: flex;
