@@ -181,6 +181,7 @@ const ChatView = (): JSX.Element => {
     console.log(inference);
     if (inference) {
       const { response, action: action } = parseResponse(inference.message.content);
+
       if (response == 'error') {
         updateDialogueEntries(question, 'Sorry, I had a problem with your request.');
       } else {
@@ -276,7 +277,7 @@ const ChatView = (): JSX.Element => {
             }}
           />
           <Chat.SubmitButton
-            disabled={isOllamaBeingPolled}
+            disabled={isOllamaBeingPolled || !inputValue}
             onClick={() => handleQuestionAsked(inputValue)}
           />
         </Chat.InputWrapper>
@@ -371,11 +372,11 @@ const Chat = {
     background: ${(props) => props.theme.colors.hunter};
     position: absolute;
     right: 5px;
-    cursor: pointer;
+    cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
     border: none;
 
     &:hover {
-      background: ${(props) => props.theme.colors.emerald};
+      background: ${(props) => (props.disabled ? props.theme.colors.hunter : props.theme.colors.emerald)};
     }
   `,
   Dropdown: Styled.select`
@@ -389,7 +390,7 @@ const Chat = {
       border: 2px solid ${(props) => props.theme.colors.hunter}; 
       font-family: ${(props) => props.theme.fonts.family.primary.regular};
       font-size: ${(props) => props.theme.fonts.size.small};
-      cursor: pointer;
+      cursor:  pointer;
 
       &:hover {
         border: 2px solid ${(props) => props.theme.colors.emerald};
