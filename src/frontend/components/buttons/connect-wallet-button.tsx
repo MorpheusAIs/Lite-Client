@@ -59,7 +59,6 @@ const ConnectWalletButton = {
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
     color: ${(props) => props.theme.colors.notice};
-    margin-right: 10px;
   `,
   Badge: Styled.div<BadgeProps>`
     display: flex;
