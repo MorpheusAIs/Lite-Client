@@ -199,6 +199,9 @@ const ChatView = (): JSX.Element => {
   const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedChain = e.target.value;
 
+    const selectedValue = e.target.value;
+    setSelectedNetwork(selectedValue);
+
     // Check if the default option is selected
     if (!selectedChain) {
       console.log('No network selected.');
@@ -235,7 +238,7 @@ const ChatView = (): JSX.Element => {
   return (
     <Chat.Layout>
       {connected && (
-        <Chat.Dropdown onChange={handleNetworkChange} value="">
+        <Chat.Dropdown onChange={handleNetworkChange} value={selectedNetwork}>
           <option value="">Select a network</option>
           <option value="0x1">Ethereum</option>
           <option value="0xaa36a7">Sepolia</option>
