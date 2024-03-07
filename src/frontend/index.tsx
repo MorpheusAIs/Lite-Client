@@ -119,34 +119,34 @@ const AppRoot = () => {
 
                   return {
                     mount: () => {
-                      if (modalContainer) return;
-
-                      modalContainer = document.createElement('div');
-
+                      // Create a new div element to contain the modal
+                      const modalContainer = document.createElement('div');
                       modalContainer.id = 'meta-mask-modal-container';
-
                       document.body.appendChild(modalContainer);
 
-                      ReactDOM.render(
+                      // Create a new root for the modal container
+                      const root = createRoot(modalContainer);
+
+                      // Render the QrCodeModal component inside the root
+                      root.render(
                         <QrCodeModal
                           onClose={() => {
-                            ReactDOM.unmountComponentAtNode(modalContainer);
+                            // When the modal is closed, unmount it and remove the modal container
+                            root.unmount();
                             modalContainer.remove();
                           }}
                         />,
-                        modalContainer,
                       );
 
+                      // After a delay, update the QR code
                       setTimeout(() => {
                         updateQrCode(link);
                       }, 100);
                     },
                     unmount: () => {
-                      if (modalContainer) {
-                        ReactDOM.unmountComponentAtNode(modalContainer);
-
-                        modalContainer.remove();
-                      }
+                      // Unmount the modal component and remove the modal container
+                      ReactDOM.unmountComponentAtNode(modalContainer);
+                      modalContainer.remove();
                     },
                   };
                 },
