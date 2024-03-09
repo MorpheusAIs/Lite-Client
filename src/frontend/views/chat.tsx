@@ -199,6 +199,9 @@ const ChatView = (): JSX.Element => {
   const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedChain = e.target.value;
 
+    const selectedValue = e.target.value;
+    setSelectedNetwork(selectedValue);
+
     // Check if the default option is selected
     if (!selectedChain) {
       console.log('No network selected.');
@@ -234,13 +237,15 @@ const ChatView = (): JSX.Element => {
 
   return (
     <Chat.Layout>
-      <Chat.Dropdown onChange={handleNetworkChange} value="">
-        <option value="">Select a network</option>
-        <option value="0x1">Ethereum</option>
-        <option value="0xaa36a7">Sepolia</option>
-        <option value="0xa4b1">Arbitrum</option>
-        <option value="0x64">Gnosis</option>
-      </Chat.Dropdown>
+      {connected && (
+        <Chat.Dropdown onChange={handleNetworkChange} value={selectedNetwork}>
+          <option value="">Select a network</option>
+          <option value="0x1">Ethereum</option>
+          <option value="0xaa36a7">Sepolia</option>
+          <option value="0xa4b1">Arbitrum</option>
+          <option value="0x64">Gnosis</option>
+        </Chat.Dropdown>
+      )}
       <Chat.Main ref={chatMainRef}>
         {dialogueEntries.map((entry, index) => {
           return (
@@ -355,6 +360,9 @@ const Chat = {
     color: ${(props) => props.theme.colors.notice};
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
+    &:focus {
+      border: 2px solid ${(props) => props.theme.colors.emerald};
+    }
   `,
   Arrow: Styled.span`
     display: flex;
