@@ -237,6 +237,7 @@ const ChatView = (): JSX.Element => {
 
   return (
     <Chat.Layout>
+
       {connected && (
         <Chat.Dropdown onChange={handleNetworkChange} value={selectedNetwork}>
           <option value="">Select a network</option>
