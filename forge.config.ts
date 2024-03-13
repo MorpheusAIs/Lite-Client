@@ -18,7 +18,7 @@ const config: ForgeConfig = {
     asar: true,
     name: 'morpheus',
     extraResource: ['./executables/'],
-    icon: 'src/frontend/assets/images/circle-mor-logo',
+    icon: 'src/frontend/assets/images/circle-mor-logo.icns',
     osxSign: {
       identity: process.env.APPLE_DEVELOPER_ID,
       optionsForFile: () => {
@@ -93,7 +93,7 @@ const config: ForgeConfig = {
     new PublisherGithub({
       repository: {
         owner: 'MorpheusAIs',
-        name: 'Node',
+        name: 'Lite Client',
       },
       draft: true,
     }),
