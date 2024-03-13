@@ -33,14 +33,15 @@ const MainNavButton = {
     height: 100%;
     margin: 0 15px;
     align-items: center;
-    color: ${(props) => (props.active === 'active' ? props.theme.colors.emerald : props.theme.colors.balance)};
+    color: ${(props) => props.theme.colors.balance};
+    opacity: ${(props) => (props.active === 'active' ? 1 : 0.5)};
     font-family: ${(props) => props.theme.fonts.family.primary.bold};
     font-size: ${(props) => props.theme.fonts.size.medium};
     text-decoration: none;
     transition: border 0.25s, color 0.25s;
 
     &:hover span {
-      color: ${(props) => props.theme.colors.emerald};
+      opacity: 0.75;
     }
   `,
   Icon: Styled.img`

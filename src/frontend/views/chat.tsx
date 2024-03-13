@@ -181,6 +181,7 @@ const ChatView = (): JSX.Element => {
     console.log(inference);
     if (inference) {
       const { response, action: action } = parseResponse(inference.message.content);
+
       if (response == 'error') {
         updateDialogueEntries(question, 'Sorry, I had a problem with your request.');
       } else {
@@ -197,6 +198,9 @@ const ChatView = (): JSX.Element => {
 
   const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedChain = e.target.value;
+
+    const selectedValue = e.target.value;
+    setSelectedNetwork(selectedValue);
 
     // Check if the default option is selected
     if (!selectedChain) {
@@ -233,13 +237,16 @@ const ChatView = (): JSX.Element => {
 
   return (
     <Chat.Layout>
-      <Chat.Dropdown onChange={handleNetworkChange} value="">
-        <option value="">Select a network</option>
-        <option value="0x1">Ethereum</option>
-        <option value="0xaa36a7">Sepolia</option>
-        <option value="0xa4b1">Arbitrum</option>
-        <option value="0x64">Gnosis</option>
-      </Chat.Dropdown>
+
+      {connected && (
+        <Chat.Dropdown onChange={handleNetworkChange} value={selectedNetwork}>
+          <option value="">Select a network</option>
+          <option value="0x1">Ethereum</option>
+          <option value="0xaa36a7">Sepolia</option>
+          <option value="0xa4b1">Arbitrum</option>
+          <option value="0x64">Gnosis</option>
+        </Chat.Dropdown>
+      )}
       <Chat.Main ref={chatMainRef}>
         {dialogueEntries.map((entry, index) => {
           return (
@@ -276,7 +283,7 @@ const ChatView = (): JSX.Element => {
             }}
           />
           <Chat.SubmitButton
-            disabled={isOllamaBeingPolled}
+            disabled={isOllamaBeingPolled || !inputValue}
             onClick={() => handleQuestionAsked(inputValue)}
           />
         </Chat.InputWrapper>
@@ -313,10 +320,10 @@ const Chat = {
     margin-bottom: 20px;
   `,
   Question: Styled.span`
-    display: flex;
     color: ${(props) => props.theme.colors.notice};
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
+    word-wrap: break-word;
     margin-bottom: 5px;
   `,
   Answer: Styled.span`
@@ -348,12 +355,15 @@ const Chat = {
     width: 100%;
     height: 40px;
     border-radius: 30px;
-    padding: 0 25px;
+    padding: 0 40px 0 25px;
     background: ${(props) => props.theme.colors.core};
     border: 2px solid ${(props) => props.theme.colors.hunter};
     color: ${(props) => props.theme.colors.notice};
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
+    &:focus {
+      border: 2px solid ${(props) => props.theme.colors.emerald};
+    }
   `,
   Arrow: Styled.span`
     display: flex;
@@ -371,11 +381,11 @@ const Chat = {
     background: ${(props) => props.theme.colors.hunter};
     position: absolute;
     right: 5px;
-    cursor: pointer;
+    cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
     border: none;
 
     &:hover {
-      background: ${(props) => props.theme.colors.emerald};
+      background: ${(props) => (props.disabled ? props.theme.colors.hunter : props.theme.colors.emerald)};
     }
   `,
   Dropdown: Styled.select`
@@ -389,7 +399,7 @@ const Chat = {
       border: 2px solid ${(props) => props.theme.colors.hunter}; 
       font-family: ${(props) => props.theme.fonts.family.primary.regular};
       font-size: ${(props) => props.theme.fonts.size.small};
-      cursor: pointer;
+      cursor:  pointer;
 
       &:hover {
         border: 2px solid ${(props) => props.theme.colors.emerald};
