@@ -8,7 +8,6 @@ import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { PublisherGithub } from '@electron-forge/publisher-github';
 import fs from 'fs';
-import path from 'path';
 import { exec } from 'child_process';
 
 import { mainConfig, mainDevConfig } from './webpack.main.config';
@@ -18,7 +17,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     name: 'morpheus',
-    extraResource: ['./src/executables/'],
+    extraResource: ['./executables/'],
     icon: 'src/frontend/assets/images/circle-mor-logo',
     osxSign: {
       identity: process.env.APPLE_DEVELOPER_ID,
@@ -31,15 +30,15 @@ const config: ForgeConfig = {
     ...(process.env.APPLE_ID &&
       process.env.APPLE_ID_PASSWORD &&
       process.env.APPLE_TEAM_ID && {
-        osxNotarize: {
-          appleId: process.env.APPLE_ID,
-          appleIdPassword: process.env.APPLE_ID_PASSWORD,
-          teamId: process.env.APPLE_TEAM_ID,
-        },
-      }),
+      osxNotarize: {
+        appleId: process.env.APPLE_ID,
+        appleIdPassword: process.env.APPLE_ID_PASSWORD,
+        teamId: process.env.APPLE_TEAM_ID,
+      },
+    }),
   },
   hooks: {
-    postPackage: async (_, { platform, outputPaths }) => {
+    prePackage: async (_, platform) => {
       const platformFile =
         platform === 'darwin'
           ? 'ollama-darwin'
@@ -47,24 +46,18 @@ const config: ForgeConfig = {
             ? 'ollama.exe'
             : 'ollama-linux';
 
-      const outputResourceFolder = `${outputPaths[0]}${platform === 'darwin' ? '/morpheus.app/Contents' : ''}/resources/executables/`;
+      const filePath = `src/executables/${platformFile}`;
 
-      fs.readdir(outputResourceFolder, (err, files) => {
-        if (err) {
-          throw err;
-        }
+      platform !== 'win32'
+        ? exec(`chmod +x ${filePath}`)
+        : fs.chmodSync(filePath, 755);
 
-        files.forEach((file) => {
-          const localPath = path.join(outputResourceFolder, file);
-
-          if (file !== platformFile) {
-            //fs.unlinkSync(localPath);
-          } else {
-            platform !== 'win32' ? exec(`chmod +x ${localPath}`) : fs.chmodSync(localPath, 755);
-          }
-        });
-      });
+      fs.mkdirSync('executables');
+      fs.copyFileSync(filePath, `executables/${platformFile}`);
     },
+    postPackage: async () => {
+      fs.rmSync('executables', { recursive: true, force: true });
+    }
   },
   rebuildConfig: {},
   makers: [
@@ -94,14 +87,6 @@ const config: ForgeConfig = {
           },
         },
       },
-//     contents: [
-//       {
-//         x: 410,
-//         y: 220,
-//         type: 'link',
-//         path: '/Applications',
-//        },
-//      ],
     }),
   ],
   publishers: [

@@ -1,5 +1,5 @@
 // libs
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState, useRef } from 'react';
 import Styled from 'styled-components';
 import { useSDK } from '@metamask/sdk-react';
 import { ThreeDots } from 'react-loader-spinner';
@@ -16,6 +16,7 @@ import {
 } from '../utils/transaction';
 import { parseResponse } from '../utils/utils';
 import { ActionParams } from '../utils/types';
+import { getChainInfoByChainId } from '../utils/chain';
 
 const ChatView = (): JSX.Element => {
   const [selectedModel, setSelectedModel] = useState('llama2');
@@ -26,6 +27,9 @@ const ChatView = (): JSX.Element => {
   const { ready, sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
   const ethInWei = '1000000000000000000';
   const [selectedNetwork, setSelectedNetwork] = useState('');
+
+  const chatMainRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     window.backendBridge.ollama.onAnswer((response) => {
@@ -41,6 +45,32 @@ const ChatView = (): JSX.Element => {
       window.backendBridge.removeAllListeners(OllamaChannel.OllamaAnswer);
     };
   });
+
+  // Scroll to bottom of chat when user adds new dialogue
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (chatMainRef.current && mutation.type === 'childList') {
+          chatMainRef.current.scrollTop = chatMainRef.current.scrollHeight;
+        }
+      }
+    });
+
+    if (chatMainRef.current) {
+      observer.observe(chatMainRef?.current, {
+        childList: true, // observe direct children
+      });
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Refocus onto input field once new dialogue entry is added
+  useEffect(() => {
+    if (chatInputRef.current) {
+      chatInputRef.current.focus();
+    }
+  }, [dialogueEntries]);
 
   //Function to update dialogue entries
   const updateDialogueEntries = (question: string, message: string) => {
@@ -117,6 +147,10 @@ const ChatView = (): JSX.Element => {
         }
         break;
 
+      case 'address':
+        updateDialogueEntries(question, account);
+        break;
+
       default:
         // If the transaction type is not recognized, we will not proceed with the transaction.
         const errorMessage = `Error: Invalid transaction type: ${action.type}`;
@@ -147,6 +181,7 @@ const ChatView = (): JSX.Element => {
     console.log(inference);
     if (inference) {
       const { response, action: action } = parseResponse(inference.message.content);
+
       if (response == 'error') {
         updateDialogueEntries(question, 'Sorry, I had a problem with your request.');
       } else {
@@ -163,6 +198,9 @@ const ChatView = (): JSX.Element => {
 
   const handleNetworkChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedChain = e.target.value;
+
+    const selectedValue = e.target.value;
+    setSelectedNetwork(selectedValue);
 
     // Check if the default option is selected
     if (!selectedChain) {
@@ -184,20 +222,32 @@ const ChatView = (): JSX.Element => {
       });
       console.log(response);
     } catch (error) {
-      console.error('Failed to switch networks:', error);
+      //if switch chain fails then add the chain
+      try {
+        const chainInfo = getChainInfoByChainId(selectedChain);
+        const response = await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [chainInfo],
+        });
+      } catch (error) {
+        console.error('Failed to switch networks:', error);
+      }
     }
   };
 
   return (
     <Chat.Layout>
-      <Chat.Dropdown onChange={handleNetworkChange} value="">
-        <option value="">Select a network</option>
-        <option value="0x1">Ethereum</option>
-        <option value="0xa4b1">Arbitrum</option>
-        <option value="0xaa36a7">Sepolia</option>
-        <option value="0x4268">Holesky</option>
-      </Chat.Dropdown>
-      <Chat.Main>
+
+      {connected && (
+        <Chat.Dropdown onChange={handleNetworkChange} value={selectedNetwork}>
+          <option value="">Select a network</option>
+          <option value="0x1">Ethereum</option>
+          <option value="0xaa36a7">Sepolia</option>
+          <option value="0xa4b1">Arbitrum</option>
+          <option value="0x64">Gnosis</option>
+        </Chat.Dropdown>
+      )}
+      <Chat.Main ref={chatMainRef}>
         {dialogueEntries.map((entry, index) => {
           return (
             <Chat.QuestionWrapper
@@ -222,6 +272,7 @@ const ChatView = (): JSX.Element => {
         <Chat.InputWrapper>
           <Chat.Arrow>&gt;</Chat.Arrow>
           <Chat.Input
+            ref={chatInputRef}
             disabled={isOllamaBeingPolled}
             value={inputValue}
             onChange={handleQuestionChange}
@@ -232,7 +283,7 @@ const ChatView = (): JSX.Element => {
             }}
           />
           <Chat.SubmitButton
-            disabled={isOllamaBeingPolled}
+            disabled={isOllamaBeingPolled || !inputValue}
             onClick={() => handleQuestionAsked(inputValue)}
           />
         </Chat.InputWrapper>
@@ -269,10 +320,10 @@ const Chat = {
     margin-bottom: 20px;
   `,
   Question: Styled.span`
-    display: flex;
     color: ${(props) => props.theme.colors.notice};
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
+    word-wrap: break-word;
     margin-bottom: 5px;
   `,
   Answer: Styled.span`
@@ -304,12 +355,15 @@ const Chat = {
     width: 100%;
     height: 40px;
     border-radius: 30px;
-    padding: 0 25px;
+    padding: 0 40px 0 25px;
     background: ${(props) => props.theme.colors.core};
     border: 2px solid ${(props) => props.theme.colors.hunter};
     color: ${(props) => props.theme.colors.notice};
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
+    &:focus {
+      border: 2px solid ${(props) => props.theme.colors.emerald};
+    }
   `,
   Arrow: Styled.span`
     display: flex;
@@ -327,11 +381,11 @@ const Chat = {
     background: ${(props) => props.theme.colors.hunter};
     position: absolute;
     right: 5px;
-    cursor: pointer;
+    cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
     border: none;
 
     &:hover {
-      background: ${(props) => props.theme.colors.emerald};
+      background: ${(props) => (props.disabled ? props.theme.colors.hunter : props.theme.colors.emerald)};
     }
   `,
   Dropdown: Styled.select`
@@ -345,7 +399,7 @@ const Chat = {
       border: 2px solid ${(props) => props.theme.colors.hunter}; 
       font-family: ${(props) => props.theme.fonts.family.primary.regular};
       font-size: ${(props) => props.theme.fonts.size.small};
-      cursor: pointer;
+      cursor:  pointer;
 
       &:hover {
         border: 2px solid ${(props) => props.theme.colors.emerald};

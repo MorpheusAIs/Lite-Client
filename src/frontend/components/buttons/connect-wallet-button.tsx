@@ -23,7 +23,6 @@ export default forwardRef<HTMLDivElement>((props: Props, ref) => {
     <ConnectWalletButton.Wrapper onClick={onClick} ref={ref}>
       <ConnectWalletButton.Logo src={wallet} />
       <ConnectWalletButton.Text>{connected ? 'connected' : 'connect'}</ConnectWalletButton.Text>
-      {!connecting && <ConnectWalletButton.Badge $connected={connected} $connecting={connecting} />}
     </ConnectWalletButton.Wrapper>
   );
 });
@@ -60,7 +59,6 @@ const ConnectWalletButton = {
     font-family: ${(props) => props.theme.fonts.family.primary.regular};
     font-size: ${(props) => props.theme.fonts.size.small};
     color: ${(props) => props.theme.colors.notice};
-    margin-right: 10px;
   `,
   Badge: Styled.div<BadgeProps>`
     display: flex;

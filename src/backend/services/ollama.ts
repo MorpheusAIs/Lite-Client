@@ -164,7 +164,7 @@ export const askOllama = async (model: string, message: string) => {
       },
       {
         role: 'user',
-        content: `Answer the following question in a valid formatted JSON object without comments with both the response and action fields deduced from the user's question. Adhere strictly to JSON syntax without comments. Question: ${message}. Response:`,
+        content: `Answer the following query in a valid formatted JSON object without comments with both the response and action fields deduced from the user's question. Adhere strictly to JSON syntax without comments. Query: ${message}. Response: { "response":`,
       },
     ],
   });
