@@ -75,7 +75,7 @@ const config: ForgeConfig = {
       },
     }),
     new MakerDMG({
-      icon: 'src/frontend/assets/images/circle-mor-logo.icns',
+      icon: 'src/frontend/assets/images/MOR_logo_circle.icns',
       format: 'ULFO',
       background: 'src/frontend/assets/images/dmgbg.svg',
       overwrite: true,
