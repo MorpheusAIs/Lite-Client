@@ -13,6 +13,11 @@ jobs:
         run: yarn
       - name: build
         run: yarn make
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-build-artifact
+          path: out/
+
 
   build_on_mac:
     runs-on: macos-latest
@@ -29,6 +34,12 @@ jobs:
       - name: build
         run: yarn make
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-build-artifact
+          path: out/
+
+
   build_on_win:
     runs-on: windows-latest
     steps:
@@ -40,3 +51,9 @@ jobs:
         run: yarn
       - name: build
         run: yarn make
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-build-artifact
+          path: out/
+

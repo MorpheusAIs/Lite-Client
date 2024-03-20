@@ -113,6 +113,7 @@ const AppRoot = () => {
                 url: 'https://mor.org',
                 base64Icon: LOGO_METAMASK_BASE64,
               },
+
               modals: {
                 install: ({ link }) => {
                   let modalContainer: HTMLElement;
@@ -125,24 +126,24 @@ const AppRoot = () => {
 
                       document.body.appendChild(modalContainer);
 
-                      ReactDOM.render(
+                      const modalRoot = createRoot(modalContainer);
+
+                      modalRoot.render(
                         <QrCodeModal
                           onClose={() => {
-                            ReactDOM.unmountComponentAtNode(modalContainer);
+                            modalRoot.unmount();
                             modalContainer.remove();
                           }}
                         />,
-                        modalContainer,
                       );
 
                       setTimeout(() => {
                         updateQrCode(link);
                       }, 100);
                     },
+
                     unmount: () => {
                       if (modalContainer) {
-                        ReactDOM.unmountComponentAtNode(modalContainer);
-
                         modalContainer.remove();
                       }
                     },
