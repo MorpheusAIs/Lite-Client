@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useState, useEffect } from 'react';
 import Styled from 'styled-components';
 import RoundButton from '../components/buttons/round-button';
 
@@ -8,9 +8,24 @@ interface Address {
 }
 
 const AddressesView = (): JSX.Element => {
-  const [addresses, setAccounts] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [nameValue, setNameValue] = useState('');
   const [addressValue, setAddressValue] = useState('');
+
+  // get addresses on mount
+  useEffect(() => {
+    const storedAddresses = localStorage.getItem('addresses');
+    if (storedAddresses) {
+      setAddresses(JSON.parse(storedAddresses));
+    }
+  }, []);
+
+  //save addresses on change
+  useEffect(() => {
+    if (addresses.length > 0) {
+      localStorage.setItem('addresses', JSON.stringify(addresses));
+    }
+  }, [addresses]);
 
   const handleNameInputChange = (e: FormEvent<HTMLInputElement>) => {
     setNameValue(e.currentTarget.value);
@@ -22,14 +37,14 @@ const AddressesView = (): JSX.Element => {
 
   const handleAddAccount = () => {
     const newAddress = { name: nameValue.trim(), address: addressValue.trim() };
-    setAccounts([...addresses, newAddress]);
+    setAddresses([...addresses, newAddress]);
 
     setNameValue('');
     setAddressValue('');
   };
 
   const handleRemoveAccount = (indexToRemove: number) => {
-    setAccounts(addresses.filter((_, index) => index !== indexToRemove));
+    setAddresses(addresses.filter((_, index) => index !== indexToRemove));
   };
 
   return (
