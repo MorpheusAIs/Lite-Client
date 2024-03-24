@@ -178,6 +178,8 @@ const ChatView = (): JSX.Element => {
       query: question,
     });
 
+    console.log(inference);
+
     //attempt to modify the prompt if we have known addresses
     const storedAddresses = localStorage.getItem('addresses');
     if (storedAddresses) {
