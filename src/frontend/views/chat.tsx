@@ -173,12 +173,23 @@ const ChatView = (): JSX.Element => {
 
     setIsOllamaBeingPolled(true);
 
-    const inference = await window.backendBridge.ollama.question({
+    let inference = await window.backendBridge.ollama.question({
       model: selectedModel,
       query: question,
     });
 
     console.log(inference);
+
+    //attempt to modify the prompt if we have known addresses
+    const storedAddresses = localStorage.getItem('addresses');
+    if (storedAddresses) {
+      const modifiedQuestion = replaceAddressNames(question, JSON.parse(storedAddresses));
+      inference = await window.backendBridge.ollama.question({
+        model: selectedModel,
+        query: modifiedQuestion,
+      });
+    }
+
     if (inference) {
       const { response, action: action } = parseResponse(inference.message.content);
 
@@ -191,6 +202,22 @@ const ChatView = (): JSX.Element => {
 
     setIsOllamaBeingPolled(false);
   };
+
+  function replaceAddressNames(
+    question: string,
+    walletData: Array<{ name: string; address: string }>,
+  ): string {
+    const walletDict = walletData.reduce(
+      (acc, wallet) => {
+        acc[wallet.name.toLowerCase()] = wallet.address;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    const words = question.toLowerCase().split(' ');
+    return words.map((word) => walletDict[word] || word).join(' ');
+  }
 
   const handleQuestionChange = (e: FormEvent<HTMLInputElement>) => {
     setInputValue(e.currentTarget.value);

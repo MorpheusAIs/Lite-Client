@@ -6,6 +6,7 @@ import Styled from 'styled-components';
 // views
 // import HomeView from './views/home';
 import SettingsView from './views/settings';
+import AddressesView from './views/addresses';
 import ChatView from './views/chat';
 
 export const RoutesWrapper = () => {
@@ -13,6 +14,7 @@ export const RoutesWrapper = () => {
     <Routes>
       <Route path="/" element={<Navigate to="/chat" />} />
       <Route path="/settings" Component={SettingsView} />
+      <Route path="/addresses" Component={AddressesView} />
       <Route path="/chat" Component={ChatView} />
     </Routes>
   );
