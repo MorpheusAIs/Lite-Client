@@ -1,4 +1,4 @@
-MORPHEUS NODE
+## MORPHEUS NODE
 
 First, clone this repo.
 
@@ -18,7 +18,9 @@ To build an executable to run on your current system's specs:
 
 Other run, test, and build scripts can be found in package.json
 
-Please visit MOR.software to sign up as a developer to be rewarded for your merged contributions. Submit an MRC to get support for feature and improvement ideas.
+### Windows installer instructions
+[Google Doc](https://docs.google.com/document/d/1YjGAlTzglct8aNEqZAUeYD7SAmOETtmv/edit?usp=sharing&ouid=118042204753952761929&rtpof=true&sd=true)
 
+Please visit MOR.software to sign up as a developer to be rewarded for your merged contributions. Submit an MRC to get support for feature and improvement ideas.
 
 MOR.software is also the place to build, submit, deplloy, and manage all of your Smart Agents.
