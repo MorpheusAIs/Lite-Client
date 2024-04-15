@@ -5,7 +5,6 @@
   "description": "Morpheus is private, sovereign, AI",
   "main": ".webpack/main",
   "scripts": {
-    "preinstall": "node .setup/yarn-preinstall-system-validation.mjs",
     "start": "cross-env NODE_ENV=development DEBUG=electron-packager electron-forge start",
     "package": "set DEBUG=electron-packager && electron-forge package",
     "make": "electron-forge make",
