@@ -10,9 +10,9 @@ jobs:
         with:
           node-version: 18
       - name: install dependencies
-        run: yarn
+        run: npm ci
       - name: build
-        run: yarn make
+        run: npm run make
 
   build_on_mac:
     runs-on: macos-latest
@@ -25,9 +25,9 @@ jobs:
         with:
           node-version: 18
       - name: install dependencies
-        run: yarn
+        run: npm ci
       - name: build
-        run: yarn make
+        run: npm run make
 
   build_on_win:
     runs-on: windows-latest
@@ -37,6 +37,6 @@ jobs:
         with:
           node-version: 18
       - name: install dependencies
-        run: yarn
+        run: npm ci
       - name: build
-        run: yarn make
+        run: npm run make

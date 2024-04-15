@@ -10,9 +10,9 @@
     "package": "set DEBUG=electron-packager && electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "publish-github-minor": "yarn version --minor && git push --follow-tags",
-    "publish-github-major": "yarn version --major && git push --follow-tags",
-    "publish-github-patch": "yarn version --patch && git push --follow-tags",
+    "publish-github-minor": "npm version minor && git push --follow-tags",
+    "publish-github-major": "npm version major && git push --follow-tags",
+    "publish-github-patch": "npm version patch && git push --follow-tags",
     "lint": "eslint --ext .ts,.tsx .",
     "pretty": "npx prettier --no-error-on-unmatched-pattern src/**/*.{js,jsx,ts,tsx,json,css} --write",
     "prepare": "husky"
@@ -30,7 +30,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run pretty"
+      "pre-commit": "npm run pretty"
     }
   },
   "eslintConfig": {
