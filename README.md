@@ -23,19 +23,22 @@ I.e. C:\projects
     cd /d c:\projects
 
 2. Morpheus client Workspace Setup
-    From a command line at the project directory (created in #1)
+    From a command line at the project directory (created in #1):
+
         git clone https://github.com/MorpheusAIs/Lite-Client.git
 
 3. Project Environment Setup
     Set up the modules and components using the Yarn Package Manager
 
     Navigate to the command line of the Morpheus client local repository, then type the following command:
+
     yarn
 
     This will set up all node modules needed.
 
 4. Build the Morpheus Client App
     From a command line at the root directory of the local Morpheus Client repo, build the client executable, type:
+    
     yarn make
 
 
