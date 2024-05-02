@@ -6,7 +6,7 @@ This document describes the CI/CD development and release process for the Lite-C
 
 I. Development Cycle
   A. Branch Creation
-     1. Developers update or create their branches (e.g., `DEV1`, `DEV2`, ..., `DEVN`) from the latest `INT` to incorporate recent changes.
+     1. Developers update or create their branches (e.g., `DEV1`, `DEV2`, ..., `DEVX`) from the latest `INT` to incorporate recent changes.
 
   B. Development and Testing
      1. Development and local unit testing occur within these branches. Once a feature is complete, it's committed to the respective branch.
