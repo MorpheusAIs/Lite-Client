@@ -63,7 +63,7 @@ const TopNav = {
   display: flex;
   width: 50px;
   height: 50px;
-`,
+  `,
   SettingsIcon: Styled(SettingsImg)`
     display: flex;
     width: 50px;
