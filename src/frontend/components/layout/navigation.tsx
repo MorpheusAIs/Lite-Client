@@ -8,6 +8,7 @@ import MainNavigationButton from '../buttons/navigation-button';
 // images
 import ChatImg from './../../assets/images/chat.svg';
 import HomeImg from './../../assets/images/home.svg';
+import AddressesImg from './../../assets/images/addresses.svg';
 import SettingsImg from './../../assets/images/settings.svg';
 
 const MainNavigation = () => {
@@ -15,6 +16,12 @@ const MainNavigation = () => {
     <TopNav.Layout>
       <TopNav.MainNavButton icon={<TopNav.ChatIcon />} text="chat" href="/chat" exact={true} />
       {/* <TopNav.MainNavButton icon={<TopNav.HomeIcon />} text="home" href="/" exact={true} /> */}
+      <TopNav.MainNavButton
+        icon={<TopNav.AddressesIcon />}
+        text="addresses"
+        href="/addresses"
+        exact={true}
+      />
       <TopNav.MainNavButton
         icon={<TopNav.SettingsIcon />}
         text="settings"
@@ -51,6 +58,11 @@ const TopNav = {
     display: flex;
     width: 50px;
     height: 50px;
+  `,
+  AddressesIcon: Styled(AddressesImg)`
+  display: flex;
+  width: 50px;
+  height: 50px;
   `,
   SettingsIcon: Styled(SettingsImg)`
     display: flex;
