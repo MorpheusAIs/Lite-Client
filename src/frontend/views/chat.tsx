@@ -26,7 +26,7 @@ const ChatView = (): JSX.Element => {
   const [isOllamaBeingPolled, setIsOllamaBeingPolled] = useState(false);
   const { ready, sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
   const ethInWei = '1000000000000000000';
-  const [selectedNetwork, setSelectedNetwork] = useState('');
+  const [selectedNetwork, setSelectedNetwork] = useState(chainId);
 
   const chatMainRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
@@ -234,7 +234,7 @@ const ChatView = (): JSX.Element => {
 
   return (
     <Chat.Layout>
-      <Chat.Dropdown onChange={handleNetworkChange} value="">
+      <Chat.Dropdown onChange={handleNetworkChange} value="{selectedNetwork}">
         <option value="">Select a network</option>
         <option value="0x1">Ethereum</option>
         <option value="0xaa36a7">Sepolia</option>
