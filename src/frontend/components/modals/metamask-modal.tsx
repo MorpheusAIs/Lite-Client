@@ -7,13 +7,14 @@ import { truncateString } from './../../helpers';
 
 // img
 import copyIcon from './../../assets/images/copy-link.png';
+import { useSDK } from '@metamask/sdk-react';
+import { formatEther } from 'ethers';
 
-export interface Props {
-  account: string;
-}
+export interface Props {}
 
 const MetaMaskModal = forwardRef<HTMLDivElement>((props: Props, ref) => {
-  const { account } = props;
+  const { account, balance } = useSDK();
+  if (!account) return null;
 
   const isClipboardAvailable = navigator.clipboard && navigator.clipboard.writeText !== undefined;
 
@@ -30,10 +31,17 @@ const MetaMaskModal = forwardRef<HTMLDivElement>((props: Props, ref) => {
             />
           </MetaMaskRoot.Row>
         ) : (
-          <MetaMaskRoot.Value>{truncateString(account)}</MetaMaskRoot.Value>
+          <MetaMaskRoot.Row>
+            <MetaMaskRoot.Value>{truncateString(account)}</MetaMaskRoot.Value>
+          </MetaMaskRoot.Row>
         )}
       </MetaMaskRoot.Group>
-      <MetaMaskRoot.Group></MetaMaskRoot.Group>
+      <MetaMaskRoot.Group>
+        <MetaMaskRoot.Label>ETH balance</MetaMaskRoot.Label>
+        <MetaMaskRoot.Row>
+          <MetaMaskRoot.Value>{formatEther(balance ?? '0')}</MetaMaskRoot.Value>
+        </MetaMaskRoot.Row>
+      </MetaMaskRoot.Group>
     </MetaMaskRoot.Layout>
   );
 });
@@ -43,7 +51,7 @@ const MetaMaskRoot = {
     display: flex;
     flex-direction: column;
     width: 250px;
-    height: 70px;
+    height: 100px;
     border-radius: 10px;
     background: ${(props) => props.theme.colors.core};
     border: 5px solid ${(props) => props.theme.colors.hunter};
