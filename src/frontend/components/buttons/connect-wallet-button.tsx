@@ -4,10 +4,10 @@ import Styled from 'styled-components';
 
 // img
 import wallet from './../../assets/images/wallet.png';
+import { truncateString } from '../../helpers';
+import { useSDK } from '@metamask/sdk-react';
 
 export interface Props {
-  connected: boolean;
-  connecting: boolean;
   onClick: () => void;
 }
 
@@ -17,12 +17,19 @@ type BadgeProps = {
 };
 
 export default forwardRef<HTMLDivElement>((props: Props, ref) => {
-  const { connected, connecting, onClick } = props;
+  const { connected, account } = useSDK();
+  const { onClick } = props;
 
-  return (
+  return !connected ? (
     <ConnectWalletButton.Wrapper onClick={onClick} ref={ref}>
       <ConnectWalletButton.Logo src={wallet} />
-      <ConnectWalletButton.Text>{connected ? 'connected' : 'connect'}</ConnectWalletButton.Text>
+      <ConnectWalletButton.Text>{'connect'}</ConnectWalletButton.Text>
+    </ConnectWalletButton.Wrapper>
+  ) : (
+    <ConnectWalletButton.Wrapper onClick={onClick} ref={ref}>
+      <ConnectWalletButton.Logo src={wallet} />
+      <ConnectWalletButton.Text>{truncateString(account ?? '')}</ConnectWalletButton.Text>
+      {/* <ConnectWalletButton.Text>ETH: {formatEther(balance ?? '0')}</ConnectWalletButton.Text> */}
     </ConnectWalletButton.Wrapper>
   );
 });
