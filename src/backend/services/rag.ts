@@ -53,7 +53,13 @@ function extractMetadataAbi(contract: any): any {
 contractFilenames.forEach((contractFilename) => {
   let filePath: string = path.join(CONTRACTS_DIR, contractFilename);
   let rawData: string = fs.readFileSync(filePath, 'utf8');
-  let payload: any = JSON.parse(rawData);
+  let payload: any;
+  try {
+    payload = JSON.parse(rawData);
+  } catch (error) {
+    console.error(`Error parsing ${contractFilename}: ${error}`);
+    return;
+  }
 
   if (payload.contracts) {
     payload.contracts.forEach((contract: any) => {
