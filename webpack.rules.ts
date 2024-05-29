@@ -28,4 +28,10 @@ export const rules: Required<ModuleOptions>['rules'] = [
       },
     },
   },
+  {
+    test: /\.js$/,
+    resolve: {
+      fullySpecified: false,
+    },
+  },
 ];

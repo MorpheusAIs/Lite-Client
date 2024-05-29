@@ -53,7 +53,13 @@ function extractMetadataAbi(contract: any): any {
 contractFilenames.forEach((contractFilename) => {
   let filePath: string = path.join(CONTRACTS_DIR, contractFilename);
   let rawData: string = fs.readFileSync(filePath, 'utf8');
-  let payload: any = JSON.parse(rawData);
+  let payload: any;
+  try {
+    payload = JSON.parse(rawData);
+  } catch (error) {
+    console.error(`Error parsing ${contractFilename}: ${error}`);
+    return;
+  }
 
   if (payload.contracts) {
     payload.contracts.forEach((contract: any) => {
@@ -87,7 +93,6 @@ const serviceContext = serviceContextFromDefaults({
   chunkSize: 4096,
 });
 
-
 async function indexCreation() {
   var index = await VectorStoreIndex.fromDocuments(documentsContractsMetadata, { serviceContext });
   console.log('Index:', index);
@@ -108,7 +113,6 @@ async function loadContractABIs() {
 
     console.log('Formatted Contracts:', formattedContracts);
     return createInMemoryVectorStore(formattedContracts);
-
   } catch (error) {
     console.error('Error loading contracts:', error);
     throw error;
@@ -130,8 +134,7 @@ const createInMemoryVectorStore = async (contracts: string[]): Promise<any> => {
 
 console.log('Loading Contract ABIs...');
 
-export async function contractsRetreival() {
-
+export async function contractsAbiRetrieval() {
   // Load Contract ABIs
   const abiInMemoryVectorStore = await loadContractABIs();
 
@@ -139,7 +142,6 @@ export async function contractsRetreival() {
   const contractAbiRetriever = await abiInMemoryVectorStore.asRetriever({ k: TOP_K_ABIS });
 
   return contractAbiRetriever;
-
 }
 
 // Load Metamask Examples
@@ -169,7 +171,6 @@ const createFaissStoreFromExamples = async (examples: any[]): Promise<any> => {
 };
 
 export async function metamaskExamplesRetrieval() {
-
   // Metamask Examples
   const metamaskExamplesInMemoryVectorStore = await loadMetamaskExamples();
 
@@ -179,5 +180,4 @@ export async function metamaskExamplesRetrieval() {
   });
 
   return metamaskExamplesRetriever;
-
-};
+}

@@ -112,7 +112,7 @@ export const errorHandling = `###Error Handling:
 - For buy or transfer actions without a specified ETH amount, request the missing details.
 - For sell actions without a specified token amount, request the missing details.
 - Never include comments within the JSON objects returned.
-- Plan for detailed error messages for unsupported or incomplete action requests to guide users effectively.`;
+- Plan for detailed error messages for unsupported or incomplete action requests to guide users effectively.
 
 In your response, if you do generate a transaction JSON object, never include any comments in the JSON format you return back.
 `;
