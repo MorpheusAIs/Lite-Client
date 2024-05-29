@@ -58,17 +58,21 @@ Mac OS Systems
 Prerequisites
 
 Homebrew Package Manager:
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 Node.js
-`brew install node`
+
+      brew install node
 
 yarn
-`brew install yarn`
+
+      brew install yarn
 
 Python 3.10 if it is not yet installed when yarn is giving error about missing python 3.10
-  brew list --versions | grep python
-  brew install python@3.10
+
+      brew list --versions | grep python
+      brew install python@3.10
 
 1. Create project workspace directory
 Open shell termninal prompt and create a project workspace directory
