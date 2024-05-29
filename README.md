@@ -49,6 +49,64 @@ I.e. Presume the starting directory is: C:\projects
 
         <PATH-TO-LOCAL-MORPHEUS-CLIENT-REPO>\Lite-Client-main\out\morpheus-win32-x64.exe
 
+### Windows installer instructions (Doc format)
+[Google Doc](https://docs.google.com/document/d/1YjGAlTzglct8aNEqZAUeYD7SAmOETtmv/edit?usp=sharing&ouid=118042204753952761929&rtpof=true&sd=true)
+
+
+Mac OS Systems
+
+Prerequisites
+
+Homebrew Package Manager:
+
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+Node.js
+
+      brew install node
+
+yarn
+
+      brew install yarn
+
+Python 3.10 if it is not yet installed when yarn is giving error about missing python 3.10
+
+      brew list --versions | grep python
+      brew install python@3.10
+
+1. Create project workspace directory
+Open shell termninal prompt and create a project workspace directory
+
+    Presume that the starting directory is: $HOME/workspaces/github
+
+		mkdir -p $HOME/workspaces/github
+
+		cd $HOME/workspaces/github
+
+2. Morpheus client Workspace Setup
+    In the workspace directory (created in #1), type:
+
+          git clone https://github.com/MorpheusAIs/Lite-Client.git
+
+3. Project Environment Setup
+    Set up the modules and components using the Yarn Package Manager
+
+    Navigate to the command line of the Morpheus client local repository, then type the following command:
+
+      yarn
+
+    This will set up all node modules needed.
+
+4. Build the Morpheus Client App
+    From a command line at the root directory of the local Morpheus Client repo, build the client executable, type:
+
+     yarn make
+
+
+6. Application Runtime and Testing
+    Upon successful build, run the Morpheus client app by clicking the following macos app:
+
+        <PATH-TO-LOCAL-MORPHEUS-CLIENT-REPO>/out/morpheus-darwin-arm64/morpheus.app
 
 
 NOTES
@@ -62,9 +120,3 @@ NOTES
 •	Be sure to complete these steps from an account with administrative access to the host machine
 
 •	The initial start of the application may take extended time to start due to the initial configuration and run of the application
-
-
-
-### Windows installer instructions (Doc format)
-[Google Doc](https://docs.google.com/document/d/1YjGAlTzglct8aNEqZAUeYD7SAmOETtmv/edit?usp=sharing&ouid=118042204753952761929&rtpof=true&sd=true)
-
